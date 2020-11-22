@@ -74,8 +74,9 @@ class Dijkstra {
                     int v, cost;
                     tie(v, cost) = graph[u][i];
                     // 頂点uに隣接する各頂点に対して、頂点uを経由した場合の距離を計算し、今までの距離(dist)よりも小さければ更新する
-                    if (dist[v] > dist[u]+cost) {
-                        dist[v] = dist[u] + cost;  // 更新
+                    int ncost = dist[u]+cost; if (dist[u]>0 && cost>0 && ncost<0) ncost = INT_MAX;  // オーバーフロー対策
+                    if (dist[v] > ncost) {
+                        dist[v] = ncost;  // 更新
                         que.push(make_pair(v, dist[v]));
                     }
                 }
@@ -108,6 +109,14 @@ void test1() {
     for (int i=0; i<dist.size(); i++) {
         cout << "dist[" << i << "]=" << dist[i] << endl;
     }
+    // dist[0]=0
+    // dist[1]=1
+    // dist[2]=6
+    // dist[3]=2
+    // dist[4]=3
+    // dist[5]=4
+    // dist[6]=7
+    // dist[7]=9
 }
 
 void test2() {
@@ -131,6 +140,12 @@ void test2() {
     for (int i=0; i<dist.size(); i++) {
         cout << "dist[" << i << "]=" << dist[i] << endl;
     }
+    // dist[0]=0
+    // dist[1]=5
+    // dist[2]=3
+    // dist[3]=5
+    // dist[4]=4
+    // dist[5]=7
 }
 
 void test3() {

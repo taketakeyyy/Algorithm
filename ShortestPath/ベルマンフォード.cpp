@@ -61,8 +61,9 @@ class BellmanFord {
                     for (pii v_cost : graph[u]) {
                         int v, cost;
                         tie(v, cost) = v_cost;
-                        if (dist[v] > dist[u]+cost) {
-                            dist[v] = dist[u]+cost;
+                        int ncost = dist[u]+cost; if (dist[u]>0 && cost>0 && ncost<0) ncost = INT_MAX;  // オーバーフロー対策
+                        if (dist[v] > ncost) {
+                            dist[v] = ncost;
                             update = true;
                             if (t == this->v-1) {
                                 return make_pair(true, dist);
