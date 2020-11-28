@@ -16,7 +16,7 @@ vector<int> sieve(int n) {
      *  primes: 素数を格納したvector
      *
      ***/
-    vector<bool> is_prime(n, true);  // is_prime[i] := 整数iは素数かどうか
+    vector<bool> is_prime(n+1, true);  // is_prime[i] := 整数iは素数かどうか
     is_prime[0] = false; is_prime[1] = false;
 
     vector<int> primes;  // 素数を格納する
