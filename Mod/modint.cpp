@@ -47,11 +47,35 @@ ostream& operator<<(ostream& os, const mint& a) { return os << a.x;}
 
 
 void test(void) {
-    mint a=0;
+    /* 基本的な使い方 */
+    mint a, b;
+    a = 100;
+    b = a + MOD;
+    /* istreamとostreamをオーバロードしてるので、mint型も普通に入出力できる */
+    cout << b << endl;  // 100
+    /* 明示的にlong long型を出力するときは.xを参照する */
+    cout << b.x << endl;  // 100
 
-    /* +演算 */
-    cout << a+1000000008 << endl;
-    // 1
+    /* 二次元配列 dp[H][W] の作成 */
+    int H=100, W=200;
+    vector<vector<mint>> dp(H, vector<mint>(W, 0));
+
+    /* 逆元を計算する */
+    // modintの「3で割る」は、「3の逆元をかける」に等しい
+    // inv()の計算は重いので、予め計算しておく
+    mint inv3 = mint(3).inv();
+    cout << inv3 << endl;  // 333333336
+
+    /* 割り算の注意 */
+    // 普通に割り算してOKだが、割り算の内部処理のinv()の計算は重いので注意
+    mint c = 100;
+    c /= 3;
+    cout << c << endl;  // 333333369
+
+    // なので、何回も3で割るなら、あらかじめ3の逆元を計算しておき、「3の逆元をかける」方が高速
+    c = 100;
+    c *= inv3;
+    cout << c << endl;  // 333333369
 }
 
 int main(int argc, char const *argv[]){
