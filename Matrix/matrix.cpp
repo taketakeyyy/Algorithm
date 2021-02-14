@@ -69,6 +69,18 @@ namespace MatrixLib {
             Matrix operator+(const Matrix other) const {
                 return Matrix(*this) += other;
             }
+            Matrix& operator+=(const double a) {
+                /* 各要素にaを足す */
+                for (size_t i=0; i<this->row; i++) {
+                    for (size_t j=0; j<this->col; j++) {
+                        this->A[i][j] += a;
+                    }
+                }
+                return *this;
+            }
+            Matrix operator+(const double a) const {
+                return Matrix(*this) += a;
+            }
 
             Matrix& operator-=(Matrix other) {
                 for(size_t i=0; i<this->row; i++) {
@@ -89,6 +101,18 @@ namespace MatrixLib {
                     }
                 }
                 return res;
+            }
+            Matrix& operator-=(const double a) {
+                /* 各要素にaを引く */
+                for (size_t i=0; i<this->row; i++) {
+                    for (size_t j=0; j<this->col; j++) {
+                        this->A[i][j] -= a;
+                    }
+                }
+                return *this;
+            }
+            Matrix operator-(const double a) const {
+                return Matrix(*this) -= a;
             }
 
             Matrix& operator*=(Matrix other) {
@@ -219,34 +243,145 @@ namespace MatrixLib {
 
 void test(){
     cout << "===test===" << endl;
-    MatrixLib::Matrix<double> mat1(3,3);
-    MatrixLib::Matrix<double> mat2(3,3);
+    MatrixLib::Matrix<double> mat1(3,3);  // 要素がdoble型の3x3行列mat1の作成
+    MatrixLib::Matrix<double> mat2(3,3);  // 要素がdoble型の3x3行列mat2の作成
+    MatrixLib::Matrix<double> res;
     for (int i=0; i<3; i++) {
         for (int j=0; j<3; j++) {
             mat1[i][j] = j+i*3;
             mat2[i][j] = 1;
         }
     }
+    // 行列mat1の確認
+    mat1.print();
+// [[0.000000, 1.000000, 2.000000],
+//   3.000000, 4.000000, 5.000000],
+//   6.000000, 7.000000, 8.000000]]
+
+    // 行列mat2の確認
+    mat2.print();
+// [[1.000000, 1.000000, 1.000000],
+//   1.000000, 1.000000, 1.000000],
+//   1.000000, 1.000000, 1.000000]]
+
+    // 行数の取得
+    cout << "mat1.row: " << mat1.row << endl;
+    // mat1.row: 3
+
+    // 列数の取得
+    cout << "mat1.col: " << mat1.col << endl;
+    // mat1.col: 3
+
+    // 代入
     mat2[0][0] = 20;
+    mat2.print();
+// [[20.000000,  1.000000,  1.000000],
+//    1.000000,  1.000000,  1.000000],
+//    1.000000,  1.000000,  1.000000]]
+
+    // 行列の+演算
     mat1 = mat1 + mat2;
+    mat1.print();
+// [[20.000000,  2.000000,  3.000000],
+//    4.000000,  5.000000,  6.000000],
+//    7.000000,  8.000000,  9.000000]]
+
+    // 行列の+=演算
     mat1 += mat2;
     mat1.print();
-    mat2.print();
+// [[40.000000,  3.000000,  4.000000],
+//    5.000000,  6.000000,  7.000000],
+//    8.000000,  9.000000, 10.000000]]
 
+    // 行列の-演算
+    mat1 = mat1 - mat2;
+    mat1.print();
+// [[20.000000,  2.000000,  3.000000],
+//    4.000000,  5.000000,  6.000000],
+//    7.000000,  8.000000,  9.000000]]
+
+    // 行列の-=演算
+    mat1 -= mat2;
+    mat1.print();
+// [[0.000000, 1.000000, 2.000000],
+//   3.000000, 4.000000, 5.000000],
+//   6.000000, 7.000000, 8.000000]]
+
+    // 各要素の符号を反転
+    res = -mat1;
+    res.print();
+// [[-0.000000, -1.000000, -2.000000],
+//   -3.000000, -4.000000, -5.000000],
+//   -6.000000, -7.000000, -8.000000]]
+
+    // 行列の*演算
+    res = mat1 * mat2;
+    res.print();
+// [[  3.000000,   3.000000,   3.000000],
+//    69.000000,  12.000000,  12.000000],
+//   135.000000,  21.000000,  21.000000]]
+
+    // 行列の*=演算
     mat1 *= mat2;
     mat1.print();
+// [[  3.000000,   3.000000,   3.000000],
+//    69.000000,  12.000000,  12.000000],
+//   135.000000,  21.000000,  21.000000]]
 
+    // mat1の各要素に1を足す（+演算子）
+    res = mat1 + 1;
+    res.print();
+// [[  4.000000,   4.000000,   4.000000],
+//    70.000000,  13.000000,  13.000000],
+//   136.000000,  22.000000,  22.000000]]
+
+    // mat1の各要素に1を足す（+=演算子）
+    mat1 += 1;
+    mat1.print();
+// [[  4.000000,   4.000000,   4.000000],
+//    70.000000,  13.000000,  13.000000],
+//   136.000000,  22.000000,  22.000000]]
+
+    // mat1の各要素に1を引く（-演算子）
+    res = mat1 - 1;
+    res.print();
+// [[  3.000000,   3.000000,   3.000000],
+//    69.000000,  12.000000,  12.000000],
+//   135.000000,  21.000000,  21.000000]]
+
+    // mat1の各要素に1を引く（-=演算子）
+    mat1 -= 1;
+    mat1.print();
+// [[  3.000000,   3.000000,   3.000000],
+//    69.000000,  12.000000,  12.000000],
+//   135.000000,  21.000000,  21.000000]]
+
+    // mat1の各要素を2倍する（*演算子）
+    res = mat1 * 2;
+    res.print();
+// [[  6.000000,   6.000000,   6.000000],
+//   138.000000,  24.000000,  24.000000],
+//   270.000000,  42.000000,  42.000000]]
+
+    // mat1の各要素を2倍する（*=演算子）
     mat1 *= 2;
     mat1.print();
+// [[  6.000000,   6.000000,   6.000000],
+//   138.000000,  24.000000,  24.000000],
+//   270.000000,  42.000000,  42.000000]]
 
+    // mat1の各要素を2.1倍する
     mat1 *= 2.1;
     mat1.print();
+// [[ 12.600000,  12.600000,  12.600000],
+//   289.800000,  50.400000,  50.400000],
+//   567.000000,  88.200000,  88.200000]]
 }
 
 void test2(){
     cout << "===test2===" << endl;
-    MatrixLib::Matrix<int> mat1(2,3);
-    MatrixLib::Matrix<int> mat2(3,2);
+    MatrixLib::Matrix<int> mat1(2,3);  // 要素がint型の2x3行列mat1の作成
+    MatrixLib::Matrix<int> mat2(3,2);  // 要素がint型の3x2行列mat2の作成
     mat1[0][0]=2; mat1[0][1]=1; mat1[0][2]=3;
     mat1[1][0]=5; mat1[1][1]=6; mat1[1][2]=4;
 
@@ -254,41 +389,44 @@ void test2(){
     mat2[1][0]=3; mat2[1][1]=2;
     mat2[2][0]=4; mat2[2][1]=3;
 
+    // mat1の確認
+    mat1.print();
+// [[2, 1, 3],
+//   5, 6, 4]]
+
+    // mat2の確認
+    mat2.print();
+// [[1, 2],
+//   3, 2],
+//   4, 3]]
+
+    // mat1とmat2の積
     MatrixLib::Matrix<int> mat = mat1 * mat2;
     mat.print();
+// [[17, 15],
+//   39, 34]]
 
     mat *= 2;
     mat.print();
+// [[34, 30],
+//   78, 68]]
 
-    mat *= 2.1;
+    mat *= 2.1;  // 要素はint型なので、小数点以下は切り捨てられる
     mat.print();
-}
-
-void test3(){
-    cout << "===test3===" << endl;
-    MatrixLib::Matrix<int> mat1(3,3);
-    MatrixLib::Matrix<int> mat2(3,3);
-    mat1[0][0]=2; mat1[0][1]=1; mat1[0][2]=3;
-    mat1[1][0]=5; mat1[1][1]=6; mat1[1][2]=4;
-    mat1[2][0]=2; mat1[2][1]=1; mat1[2][2]=3;
-
-    mat2[0][0]=1; mat2[0][1]=2; mat2[0][2]=3;
-    mat2[1][0]=3; mat2[1][1]=2; mat2[1][2]=2;
-    mat2[2][0]=4; mat2[2][1]=3; mat2[2][2]=1;
-
-    mat1.print();
-    mat1 *= mat2;
-    mat1.print();
+// [[ 71,  63],
+//   163, 142]]
 }
 
 void test_det2() {
     // 行列式確認用サイト
     // https://keisan.casio.jp/exec/system/1279265553
     cout << "===test_det2===" << endl;
-    MatrixLib::Matrix<int> mat(2,2);
+    MatrixLib::Matrix<int> mat(2,2);  // int型の2x2行列
     mat[0][0]=3; mat[0][1]=1;
     mat[1][0]=5; mat[1][1]=1;
     mat.print();
+// [[3, 1],
+//   5, 1]]
 
     int d = mat.det();
     cout << "Det: " << d << endl;
@@ -297,11 +435,14 @@ void test_det2() {
 
 void test_det3() {
     cout << "===test_det3===" << endl;
-    MatrixLib::Matrix<int> mat(3,3);
+    MatrixLib::Matrix<int> mat(3,3);  // int型の3x3行列
     mat[0][0]=3; mat[0][1]=1; mat[0][2]=1;
     mat[1][0]=5; mat[1][1]=1; mat[1][2]=3;
     mat[2][0]=2; mat[2][1]=0; mat[2][2]=1;
     mat.print();
+// [[3, 1, 1],
+//   5, 1, 3],
+//   2, 0, 1]]
 
     int d = mat.det();
     cout << "Det: " << d << endl;
@@ -310,12 +451,16 @@ void test_det3() {
 
 void test_det4() {
     cout << "===test_det4===" << endl;
-    MatrixLib::Matrix<int> mat(4,4);
+    MatrixLib::Matrix<int> mat(4,4);  // int型の4x4行列
     mat[0][0]=3; mat[0][1]=1; mat[0][2]=1; mat[0][3]=2;
     mat[1][0]=5; mat[1][1]=1; mat[1][2]=3; mat[1][3]=4;
     mat[2][0]=2; mat[2][1]=0; mat[2][2]=1; mat[2][3]=0;
     mat[3][0]=1; mat[3][1]=3; mat[3][2]=2; mat[3][3]=1;
     mat.print();
+// [[3, 1, 1, 2],
+//   5, 1, 3, 4],
+//   2, 0, 1, 0],
+//   1, 3, 2, 1]]
 
     int d = mat.det();
     cout << "Det: " << d << endl;
@@ -324,13 +469,18 @@ void test_det4() {
 
 void test_det5() {
     cout << "===test_det5===" << endl;
-    MatrixLib::Matrix<int> mat(5,5);
+    MatrixLib::Matrix<int> mat(5,5);  // int型の5x5行列
     mat[0][0]=3; mat[0][1]=1; mat[0][2]=1; mat[0][3]=2; mat[0][4]=1;
     mat[1][0]=5; mat[1][1]=1; mat[1][2]=3; mat[1][3]=4; mat[1][4]=1;
     mat[2][0]=2; mat[2][1]=0; mat[2][2]=1; mat[2][3]=0; mat[2][4]=1;
     mat[3][0]=1; mat[3][1]=3; mat[3][2]=2; mat[3][3]=1; mat[3][4]=1;
     mat[4][0]=1; mat[4][1]=1; mat[4][2]=1; mat[4][3]=1; mat[4][4]=1;
     mat.print();
+// [[3, 1, 1, 2, 1],
+//   5, 1, 3, 4, 1],
+//   2, 0, 1, 0, 1],
+//   1, 3, 2, 1, 1],
+//   1, 1, 1, 1, 1]]
 
     int d = mat.det();
     cout << "Det: " << d << endl;
@@ -341,6 +491,7 @@ void test_dot() {
     cout << "===test_dot===" << endl;
     MatrixLib::Matrix<int> mat1(3,3);
     MatrixLib::Matrix<int> mat2(3,3);
+    MatrixLib::Matrix<int> res;
     mat1[0][0]=2; mat1[0][1]=1; mat1[0][2]=3;
     mat1[1][0]=5; mat1[1][1]=6; mat1[1][2]=4;
     mat1[2][0]=2; mat1[2][1]=1; mat1[2][2]=3;
@@ -349,10 +500,34 @@ void test_dot() {
     mat2[1][0]=3; mat2[1][1]=2; mat2[1][2]=2;
     mat2[2][0]=4; mat2[2][1]=3; mat2[2][2]=1;
 
-    MatrixLib::Matrix<int> res;
-    res = mat1.dot(mat2);
-    res.print();  // test3と同じ結果になるはず
     mat1.print();
+// [[2, 1, 3],
+//   5, 6, 4],
+//   2, 1, 3]]
+
+    mat2.print();
+// [[1, 2, 3],
+//   3, 2, 2],
+//   4, 3, 1]]
+
+    // mat1とmat2のドット積（mat1*mat2と同じ）
+    res = mat1.dot(mat2);
+    res.print();
+// [[17, 15, 11],
+//   39, 34, 31],
+//   17, 15, 11]]
+
+    // 当然だが、mat1の値は変わらない
+    mat1.print();
+// [[2, 1, 3],
+//   5, 6, 4],
+//   2, 1, 3]]
+
+    // mat2の値も変わらない
+    mat2.print();
+// [[1, 2, 3],
+//   3, 2, 2],
+//   4, 3, 1]]
 }
 
 void test_inv() {
@@ -365,16 +540,23 @@ void test_inv() {
     mat[2][0]=2; mat[2][1]=0; mat[2][2]=1; mat[2][3]=0;
     mat[3][0]=1; mat[3][1]=3; mat[3][2]=2; mat[3][3]=1;
     mat.print();
+// [[3.000000, 1.000000, 1.000000, 2.000000],
+//   5.000000, 1.000000, 3.000000, 4.000000],
+//   2.000000, 0.000000, 1.000000, 0.000000],
+//   1.000000, 3.000000, 2.000000, 1.000000]]
 
     // 逆行列を計算して出力
     MatrixLib::Matrix<double> inv_mat = mat.inv();
     inv_mat.print();
+// [[ 0.500000, -0.227273,  0.363636, -0.090909],
+//    0.500000, -0.318182, -0.090909,  0.272727],
+//   -1.000000,  0.454545,  0.272727,  0.181818],
+//   -0.000000,  0.272727, -0.636364, -0.090909]]
 }
 
 int main(int argc, char const *argv[]){
     test();
     test2();
-    test3();
     test_det2();
     test_det3();
     test_det4();
