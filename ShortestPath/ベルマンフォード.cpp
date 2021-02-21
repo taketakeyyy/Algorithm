@@ -1,24 +1,19 @@
 #include <bits/stdc++.h>
-#define _USE_MATH_DEFINES  // M_PI等のフラグ
-#define MOD 1000000007
-#define COUNTOF(array) (sizeof(array)/sizeof(array[0]))
-#define rep(i,n) for (int i = 0; i < (n); ++i)
 using namespace std;
-using ll = long long;
 
 
 class BellmanFord {
     private:
-        using pii = pair<int, int>;
-        vector<vector<pii>> graph;
-        int e;  // 辺の数
-        int v;  // 頂点数
+        using pll = pair<long long, long long>;
+        vector<vector<pll>> graph;
+        long long e;  // 辺の数
+        long long v;  // 頂点数
     public:
-        BellmanFord(int n) {
+        BellmanFord(long long n) {
             /***
              * Args:
-             *  s(int): 始点
-             *  n(int): 頂点数
+             *  s(long long): 始点
+             *  n(long long): 頂点数
              *
              **/
             this->graph.resize(n);
@@ -26,42 +21,42 @@ class BellmanFord {
             this->v = n;
         }
 
-        int get_edge_num() {
+        long long get_edge_num() {
             /* 無向グラフのときは、辺の数は2倍になって返ってくる */
             return this->e;
         }
 
-        int get_vertex_num() {
+        long long get_vertex_num() {
             return this->v;
         }
 
-        void add(int u, int v, int cost) {
+        void add(long long u, long long v, long long cost) {
             /* 頂点uから頂点vへのコストはcost */
             this->graph[u].push_back(make_pair(v, cost));
             this->e++;
         }
 
-        pair<bool, vector<int>> shortest_path(int s) {
+        pair<bool, vector<long long>> shortest_path(long long s) {
             /*** 始点sからの最短経路を求める
              * Args:
-             *   s(int): 始点の頂点番号
+             *   s(long long): 始点の頂点番号
              * Returns:
              *   nloop, dist:
              *       nloop(bool): 負の閉路が存在する(true) / 存在しない(false)
-             *       dist(vector<int>): 始点sから、各頂点までの最短距離を格納した配列
+             *       dist(vector<long long>): 始点sから、各頂点までの最短距離を格納した配列
              ***/
             // [初期化処理]
-            vector<int> dist(this->v, INT_MAX);
+            vector<long long> dist(this->v, LONG_LONG_MAX);
             dist[s] = 0;
 
-            for (int t=0; t<this->v; t++) {
+            for (long long t=0; t<this->v; t++) {
                 bool update = false;
-                for (int u=0; u<this->v; u++) {
-                    if (dist[u] == INT_MAX) continue;
-                    for (pii v_cost : graph[u]) {
-                        int v, cost;
+                for (long long u=0; u<this->v; u++) {
+                    if (dist[u] == LONG_LONG_MAX) continue;
+                    for (pll v_cost : graph[u]) {
+                        long long v, cost;
                         tie(v, cost) = v_cost;
-                        int ncost = dist[u]+cost; if (dist[u]>0 && cost>0 && ncost<0) ncost = INT_MAX;  // オーバーフロー対策
+                        long long ncost = dist[u]+cost; if (dist[u]>0 && cost>0 && ncost<0) ncost = LONG_LONG_MAX;  // オーバーフロー対策
                         if (dist[v] > ncost) {
                             dist[v] = ncost;
                             update = true;
@@ -80,7 +75,7 @@ class BellmanFord {
 void test1(){
     // ![](img/bellmanford1.PNG)
     // 例1：負の閉路が存在しない場合
-    int V = 6;  // 頂点数
+    long long V = 6;  // 頂点数
     BellmanFord bf = BellmanFord(V);
     bf.add(0, 1, 5);
     bf.add(0, 2, 4);
@@ -91,7 +86,7 @@ void test1(){
     bf.add(2, 5, 4);
     bf.add(3, 5, 3);
     bf.add(4, 5, 4);
-    bool nloop; vector<int> dist;
+    bool nloop; vector<long long> dist;
     tie(nloop, dist) = bf.shortest_path(0);  // 始点0からの最短距離を求める
 
     // 負の閉路は存在するか？
@@ -99,7 +94,7 @@ void test1(){
     // nloop: false
 
     // 始点0から頂点iまでの最短距離dist[i]
-    for (int i=0; i<bf.get_vertex_num(); i++) {
+    for (long long i=0; i<bf.get_vertex_num(); i++) {
         cout << "dist[" << i << "]=" << dist[i] << endl;
     }
     // dist[0]=0
@@ -113,7 +108,7 @@ void test1(){
 void test2() {
     // ![](img/bellmanford2.PNG)
     // 例2：負の閉路が存在して、頂点5までの最短コストは求まらない場合
-    int V = 6;
+    long long V = 6;
     BellmanFord bf = BellmanFord(V);
     bf.add(0, 1, 5);
     bf.add(0, 2, 4);
@@ -125,7 +120,7 @@ void test2() {
     bf.add(3, 1, -1);
     bf.add(3, 5, 3);
     bf.add(4, 5, 4);
-    bool nloop; vector<int> dist;
+    bool nloop; vector<long long> dist;
     tie(nloop, dist) = bf.shortest_path(0);
 
     // 負の閉路は存在するか？
@@ -140,7 +135,7 @@ void test2() {
 void test3() {
     // ![](img/bellmanford3.PNG)
     // 例3：負の閉路が存在するが、頂点5までの最短コストは求まる場合
-    int V = 9;
+    long long V = 9;
     BellmanFord bf = BellmanFord(V);
     bf.add(0, 1, 5);
     bf.add(0, 2, 4);
@@ -155,7 +150,7 @@ void test3() {
     bf.add(6, 7, -1);
     bf.add(7, 8, -1);
     bf.add(8, 6, -1);
-    bool nloop; vector<int> dist;
+    bool nloop; vector<long long> dist;
     tie(nloop, dist) = bf.shortest_path(0);
 
     // 負の閉路は存在するか？
