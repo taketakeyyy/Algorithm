@@ -3,7 +3,7 @@ using namespace std;
 using ll = long long;
 
 /*** n進数で表現された文字列を、10進数の値にして返すライブラリ
- *   ※ ただし2 <= n <= 9
+ *   ※ ただしSに使っていい文字は'0'~'9'までの文字
  ***/
 
 ll n_to_10(const ll n, const string& S) {
