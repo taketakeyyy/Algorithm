@@ -9,6 +9,9 @@ using ll = long long;
 ll inclusion_exclusion_principle(ll n, vector<ll> A) {
     /*** 包除原理
      * 1以上n以下の整数で、配列Aのうち少なくとも1つで割り切れるものの個数を返す
+     *
+     * 計算量は、配列Aの大きさをmとし、|Ai ∩ Aj ∩ ... ∩ Ak| を1つ計算するのにかかる時間をO(f)とすると、
+     * 全体ではO(2^m f)
      ***/
     ll res = 0;
     ll m = A.size();
