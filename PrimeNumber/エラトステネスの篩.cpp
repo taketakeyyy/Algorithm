@@ -8,6 +8,7 @@ vector<int> sieve(int n) {
      *
      * Descriptions:
      *  n以下の素数を格納したのvectorを返す
+     *  計算量はO(n log(log n))
      *
      * Args:
      *  n(int): 正整数
