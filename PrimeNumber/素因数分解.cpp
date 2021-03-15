@@ -5,11 +5,12 @@ using namespace std;
 /*
 正整数nを素因数分解して、因数を要素としたsetを返す関数
 */
-set<int64_t> prime_factor_ver_set(int64_t n) {
-    set<int64_t> ans;
+template <typename T>
+set<T> prime_factor_ver_set(T n) {
+    set<T> ans;
     if (n <= 1) return ans;
 
-    for (int64_t i=2; i*i<=n; i++) {
+    for (T i=2; i*i<=n; i++) {
         while (n%i == 0) {
             ans.insert(i);
             n /= i;
@@ -24,11 +25,12 @@ set<int64_t> prime_factor_ver_set(int64_t n) {
 /*
 正整数nを素因数分解して、因数をkey、指数部をvalueとしたmapを返す関数
 */
-map<int64_t, int64_t> prime_factor_ver_map(int64_t n) {
-    map<int64_t, int64_t> ans;
+template <typename T>
+map<T, T> prime_factor_ver_map(T n) {
+    map<T, T> ans;
     if (n <= 1) return ans;
 
-    for (int64_t i=2; i*i<=n; i++) {
+    for (T i=2; i*i<=n; i++) {
         while (n%i == 0) {
             if (!ans.count(i)) ans[i] = 0;
             ans.at(i)++;
@@ -43,13 +45,13 @@ map<int64_t, int64_t> prime_factor_ver_map(int64_t n) {
 
 
 void test(){
-    map<int64_t, int64_t> mp;
+    map<long long, long long> mp;
 
     /* 300を因数分解する */
-    mp = prime_factor_ver_map(300);
-    for (pair<int64_t, int64_t> p : mp) {
-        int64_t key = p.first;
-        int64_t value = p.second;
+    mp = prime_factor_ver_map<long long>(300);
+    for (pair<long long, long long> p : mp) {
+        long long key = p.first;
+        long long value = p.second;
         cout << "key:" << key << " value:" << value << endl;
     }
     // key:2 value:2
@@ -59,10 +61,10 @@ void test(){
 
 
     /* 25を因数分解する */
-    mp = prime_factor_ver_map(25);
-    for (pair<int64_t, int64_t> p : mp) {
-        int64_t key = p.first;
-        int64_t value = p.second;
+    mp = prime_factor_ver_map<long long>(25);
+    for (pair<long long, long long> p : mp) {
+        long long key = p.first;
+        long long value = p.second;
         cout << "key:" << key << " value:" << value << endl;
     }
     // key:5 value:2
@@ -70,10 +72,10 @@ void test(){
 
 
     /* 2を因数分解する */
-    mp = prime_factor_ver_map(2);
-    for (pair<int64_t, int64_t> p : mp) {
-        int64_t key = p.first;
-        int64_t value = p.second;
+    mp = prime_factor_ver_map<long long>(2);
+    for (pair<long long, long long> p : mp) {
+        long long key = p.first;
+        long long value = p.second;
         cout << "key:" << key << " value:" << value << endl;
     }
     // key:2 value:1
@@ -81,10 +83,10 @@ void test(){
 
 
     /* 1を因数分解する */
-    mp = prime_factor_ver_map(1);
-    for (pair<int64_t, int64_t> p : mp) {
-        int64_t key = p.first;
-        int64_t value = p.second;
+    mp = prime_factor_ver_map<long long>(1);
+    for (pair<long long, long long> p : mp) {
+        long long key = p.first;
+        long long value = p.second;
         cout << "key:" << key << " value:" << value << endl;
     }
     // (出力なし)
@@ -92,10 +94,10 @@ void test(){
 
 
     /* 0を因数分解する */
-    mp = prime_factor_ver_map(0);
-    for (pair<int64_t, int64_t> p : mp) {
-        int64_t key = p.first;
-        int64_t value = p.second;
+    mp = prime_factor_ver_map<long long>(0);
+    for (pair<long long, long long> p : mp) {
+        long long key = p.first;
+        long long value = p.second;
         cout << "key:" << key << " value:" << value << endl;
     }
     // (出力なし)
@@ -103,10 +105,10 @@ void test(){
 
 
     /* -1を因数分解する */
-    mp = prime_factor_ver_map(-1);
-    for (pair<int64_t, int64_t> p : mp) {
-        int64_t key = p.first;
-        int64_t value = p.second;
+    mp = prime_factor_ver_map<long long>(-1);
+    for (pair<long long, long long> p : mp) {
+        long long key = p.first;
+        long long value = p.second;
         cout << "key:" << key << " value:" << value << endl;
     }
     // (出力なし)
