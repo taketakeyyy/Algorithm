@@ -11,31 +11,32 @@ using namespace std;
  *  あまり使わない。競プロでは後述のサイズバージョンのほうをよく使う。
  *
  * Args
- *  N(int): N個のノードのUnionFindを作成する
+ *  N(T): N個のノードのUnionFindを作成する
  *
  ***/
+template <typename T>
 struct UnionFindVerDepth {
     private:
-        vector<int> depths;   // グループの深さ
-        vector<int> parents;  // 親の番号を格納する。自分が親の場合は自分の番号になり、それがそのグループの番号になる
+        vector<T> depths;   // グループの深さ
+        vector<T> parents;  // 親の番号を格納する。自分が親の場合は自分の番号になり、それがそのグループの番号になる
 
     public:
-        UnionFindVerDepth(int N=0): depths(N,-1), parents(N) {
-            for (int i=0; i<N; i++) {
+        UnionFindVerDepth(T N=0): depths(N,-1), parents(N) {
+            for (T i=0; i<N; i++) {
                 parents[i] = i;
             }
         }
 
-        int find_root(int x) {
+        T find_root(T x) {
             /* ノード番号xの木の根（xがどのグループか）を求める */
             if (this->parents[x] == x) return x;
             this->parents[x] = this->find_root(this->parents[x]);  // 縮約
             return this->parents[x];
         }
 
-        void unite(int x, int y) {
+        void unite(T x, T y) {
             /* ノード番号xとyが属する木を併合する（グループの併合） */
-            int gx = this->find_root(x); int gy = this->find_root(y);
+            T gx = this->find_root(x); T gy = this->find_root(y);
             if (gx == gy) return;
 
             // 深い方が浅い方を併合する（木の偏りが減るので）
@@ -48,20 +49,20 @@ struct UnionFindVerDepth {
             }
         }
 
-        int get_depth(int x) {
+        T get_depth(T x) {
             /* ノード番号xが属するグループの深さを返す */
             return this->depths[this->find_root(x)];
         }
 
-        bool is_same_group(int x, int y) {
+        bool is_same_group(T x, T y) {
             /* ノード番号xとyが同じ集合に属するか否か */
             return this->find_root(x) == this->find_root(y);
         }
 
-        int calc_group_num() {
+        T calc_group_num() {
             /* グループ数を計算して返す */
-            int ans = 0;
-            for (int i=0; i<this->parents.size(); i++) {
+            T ans = 0;
+            for (T i=0; i<this->parents.size(); i++) {
                 if (i == this->find_root(i)) ans++;
             }
             return ans;
@@ -69,14 +70,14 @@ struct UnionFindVerDepth {
 
         void print_parents() {
             /* デバッグ用parentsの中身を出力する */
-            for (int i=0; i<this->parents.size(); i++) {
+            for (T i=0; i<this->parents.size(); i++) {
                 cout << this->parents[i] << endl;
             }
         }
 
         void print_depths() {
             /* デバッグ用depthsの中身を出力する */
-            for (int i=0; i<this->depths.size(); i++) {
+            for (T i=0; i<this->depths.size(); i++) {
                 cout << this->depths[i] << endl;
             }
         }
@@ -92,31 +93,36 @@ struct UnionFindVerDepth {
  *  競プロでは、ノードの個数やグループの最小値とかを求めるので、こちらを使うことが多い
  *
  * Args
- *  N(int): N個のノードのUnionFindを作成する
+ *  N(T): N個のノードのUnionFindを作成する
  *
+ * ならし計算量
+ *  O(α(N))
+ *    - α(N)はアッカーマン関数
+ *    - 相当小さい（logより小さい）
  ***/
+template <typename T>
 struct UnionFindVerSize {
     private:
-        vector<int> sizes;   // グループのサイズ
-        vector<int> parents;  // 親の番号を格納する。自分が親の場合は自分の番号になり、それがそのグループの番号になる
+        vector<T> sizes;   // グループのサイズ
+        vector<T> parents;  // 親の番号を格納する。自分が親の場合は自分の番号になり、それがそのグループの番号になる
 
     public:
-        UnionFindVerSize(int N=0): sizes(N,1), parents(N) {
-            for (int i=0; i<N; i++) {
+        UnionFindVerSize(T N=0): sizes(N,1), parents(N) {
+            for (T i=0; i<N; i++) {
                 parents[i] = i;
             }
         }
 
-        int find_root(int x) {
+        T find_root(T x) {
             /* ノード番号xの木の根（xがどのグループか）を求める */
             if (this->parents[x] == x) return x;
             this->parents[x] = this->find_root(this->parents[x]);  // 縮約
             return this->parents[x];
         }
 
-        void unite(int x, int y) {
+        void unite(T x, T y) {
             /* ノード番号xとyが属する木を併合する（グループの併合） */
-            int gx = this->find_root(x); int gy = this->find_root(y);
+            T gx = this->find_root(x); T gy = this->find_root(y);
             if (gx == gy) return;
 
             // 深い方が浅い方を併合する（木の偏りが減るので）
@@ -130,20 +136,20 @@ struct UnionFindVerSize {
             }
         }
 
-        int get_size(int x) {
+        T get_size(T x) {
             /* ノード番号xが属するグループの深さを返す */
             return this->sizes[this->find_root(x)];
         }
 
-        bool is_same_group(int x, int y) {
+        bool is_same_group(T x, T y) {
             /* ノード番号xとyが同じ集合に属するか否か */
             return this->find_root(x) == this->find_root(y);
         }
 
-        int calc_group_num() {
+        T calc_group_num() {
             /* グループ数を計算して返す */
-            int ans = 0;
-            for (int i=0; i<this->parents.size(); i++) {
+            T ans = 0;
+            for (T i=0; i<this->parents.size(); i++) {
                 if (i == this->find_root(i)) ans++;
             }
             return ans;
@@ -151,14 +157,14 @@ struct UnionFindVerSize {
 
         void print_parents() {
             /* デバッグ用parentsの中身を出力する */
-            for (int i=0; i<this->parents.size(); i++) {
+            for (T i=0; i<this->parents.size(); i++) {
                 cout << this->parents[i] << endl;
             }
         }
 
         void print_sizes() {
             /* デバッグ用sizesの中身を出力する */
-            for (int i=0; i<this->sizes.size(); i++) {
+            for (T i=0; i<this->sizes.size(); i++) {
                 cout << this->sizes[i] << endl;
             }
         }
@@ -167,7 +173,7 @@ struct UnionFindVerSize {
 
 int main() {
     int N = 10;
-    UnionFindVerSize uf = UnionFindVerSize(N);
+    UnionFindVerSize<int> uf = UnionFindVerSize<int>(N);
 
     uf.unite(0, 1);
     uf.unite(1, 2);
