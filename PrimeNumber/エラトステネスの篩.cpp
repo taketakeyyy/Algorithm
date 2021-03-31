@@ -1,8 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-
-vector<int> sieve(int n) {
+template <typename T>
+vector<T> sieve(T n) {
     /***
      * エラトステネスの篩
      *
@@ -11,7 +11,7 @@ vector<int> sieve(int n) {
      *  計算量はO(n log(log n))
      *
      * Args:
-     *  n(int): 正整数
+     *  n(T): 正整数
      *
      * Return:
      *  primes: 素数を格納したvector
@@ -20,11 +20,11 @@ vector<int> sieve(int n) {
     vector<bool> is_prime(n+1, true);  // is_prime[i] := 整数iは素数かどうか
     is_prime[0] = false; is_prime[1] = false;
 
-    vector<int> primes;  // 素数を格納する
-    for (int i=2; i<n+1; i++) {
+    vector<T> primes;  // 素数を格納する
+    for (T i=2; i<n+1; i++) {
         if (is_prime[i]) {
             primes.push_back(i);
-            for (int j=i*2; j<n+1; j+=i) {
+            for (T j=i*i; j<n+1; j+=i) {  // j=i*iはじまりでOK. なぜならi*(i-1)以下は、i=(i-1)以下のときの篩で消えているから
                 is_prime[j] = false;
             }
         }
@@ -34,7 +34,7 @@ vector<int> sieve(int n) {
 
 
 int main(int argc, char const *argv[]){
-    vector<int> primes = sieve(100);
+    vector<int> primes = sieve<int>(100);
     for (int i=0; i<primes.size(); i++) {
         cout << primes[i] << endl;
     }
