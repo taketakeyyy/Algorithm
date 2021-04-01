@@ -32,13 +32,12 @@ map<T, T> prime_factor_ver_map(T n) {
 
     for (T i=2; i*i<=n; i++) {
         while (n%i == 0) {
-            if (!ans.count(i)) ans[i] = 0;
-            ans.at(i)++;
+            ans[i]++;
             n /= i;
         }
     }
 
-    if (n != 1) ans[n] = 1;
+    if (n != 1) ans[n]++;
 
     return ans;
 }
