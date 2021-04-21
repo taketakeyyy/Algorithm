@@ -8,12 +8,13 @@
 using namespace std;
 
 
-int partition(vector<int>& A, int l, int r, int pivot) {
+int partition(vector<int>& A, int l, int r) {
     /* 配列A[l]~A[r]までの区間を、
      * - pivot以下の配列A[l..q]と、
      * - pivotより大きい配列A[q+1..r]に分割する
      * pivotのインデックス番号qを返す
      */
+    int pivot = A[r];
     int q = l;
     for(int j=l; j<=r; j++) {
         if (A[j] <= pivot) {
@@ -26,7 +27,7 @@ int partition(vector<int>& A, int l, int r, int pivot) {
 
 void quick_sort(vector<int>& A, int l, int r) {
     if (l < r) {
-        int q = partition(A, l, r, A[r]);
+        int q = partition(A, l, r);
         quick_sort(A, l, q-1);
         quick_sort(A, q+1, r);
     }
