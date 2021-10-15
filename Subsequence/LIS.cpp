@@ -13,44 +13,57 @@ void chmax(int& x, int y) { x = max(x,y); }
 void chmin(int& x, int y) { x = min(x,y); }
 
 
-/** 最長増加部分列(LIS)
- * Args: 配列
- * Return: LISの長さ
- **/
-ll LIS(const vector<ll> &A) {
-    ll N = (ll)A.size();
-    // dp[i] := 増加部分列の長さがiのときの、数列の最終要素の最小値
-    vector<ll> dp(N, INF);
-    for(ll i=0; i<N; i++) {
-        auto it = lower_bound(dp.begin(), dp.end(), A[i]);
-        *it = A[i];
-    }
+class LIS {
+    /** 最長増加部分列(LIS)
+     * Args:
+     *  vector<ll> A: 配列
+     *
+     * Notes:
+     *  計算量はO(NlogN)
+     *  LISを求めるのにはdp1のみでよいが、dp2も構築しといたほうが便利なのでこうしている。
+     **/
+    public:
+        ll answer;  // LISの長さ
+        vector<ll> dp1;  // dp1[i] := 長さがi+1であるような、増加部分列における最終要素の最小値
+        vector<ll> dp2;  // dp2[i] := 最後がA[i]であるような、最長な増加部分列の長さ
+        LIS(vector<ll>A) {
+            ll N = (ll)A.size();
+            dp1.assign(N, INF);
+            dp2.assign(N, 0);
 
-    return lower_bound(dp.begin(), dp.end(), INF) - dp.begin();
-}
+            for(ll i=0; i<N; i++) {
+                auto it = lower_bound(dp1.begin(), dp1.end(), A[i]);
+                *it = A[i];
+                dp2[i] = it-dp1.begin() + 1;
+            }
+
+            answer = lower_bound(dp1.begin(), dp1.end(), INF) - dp1.begin();
+        }
+};
+
 
 void test1() {
     // 5 1 3 2 4
     cout << "===test1===" << endl;
     vector<ll> A = {5, 1, 3, 2, 4};
-
-    cout << LIS(A) << endl;
+    LIS lis = LIS(A);
+    cout << lis.answer << endl;
 }
 
 void test2() {
     // 1 1 1
     cout << "===test2===" << endl;
     vector<ll> A = {1, 1, 1};
-
-    cout << LIS(A) << endl;
+    LIS lis = LIS(A);
+    cout << lis.answer << endl;
 }
 
 void test3() {
     // 4 2 3 1 5
     cout << "===test3===" << endl;
     vector<ll> A = {4, 2, 3, 1, 5};
-
-    cout << LIS(A) << endl;
+    LIS lis = LIS(A);
+    cout << lis.answer << endl;
 }
 
 int main() {
