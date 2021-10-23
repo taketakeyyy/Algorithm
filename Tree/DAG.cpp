@@ -35,21 +35,21 @@ class DAG {
         /*** DAGを構築する
          ***/
         void build() {
-            deque<T> deq;
+            deque<T> que;
 
             // まず、入次数0の頂点をキューに追加する
             for(T i=0; i<this->V; i++) {
-                if (in_degrees[i]==0) deq.push_back(i);
+                if (in_degrees[i]==0) que.push_back(i);
             }
 
             // 「キューに入っている頂点を削除する」処理を繰り返す
-            while(!deq.empty()) {
-                T u = deq.front(); deq.pop_front();
+            while(!que.empty()) {
+                T u = que.front(); que.pop_front();
 
                 // 頂点uを削除するので、頂点uに隣接している頂点の入次数を減らす
                 for(auto v: G[u]) {
                     this->in_degrees[v]--;
-                    if (this->in_degrees[v] == 0) deq.push_back(v);  // 入次数が0になった頂点は、キューに追加する
+                    if (this->in_degrees[v] == 0) que.push_back(v);  // 入次数が0になった頂点は、キューに追加する
                 }
 
                 this->dag.emplace_back(u);
