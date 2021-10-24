@@ -35,32 +35,26 @@ class DAG {
 
         /*** DAGを構築する
          * Notes:
-         *  キューにpriority_queを使っている
-         *  キューはdequeでもOK
-         *  priority_queを使うとDAGの出力が辞書順になる（できるだけ昇順になる）
+         *  キューにdequeを使っている
          *  * 計算量
          *    - dequeを使うと、O(|E|+|V|)
-         *    - priority_queを使うと、O(|E| log|V| +|V| log|V|)
-         *      - push と pop に log|V| かかる
          ***/
         void build() {
-            priority_queue<T, vector<T>, greater<T>> que;  // できるだけ昇順にしたい
+            deque<T> que;
 
             // まず、入次数0の頂点をキューに追加する
             for(T i=0; i<this->V; i++) {
-                if (in_degrees[i]==0) que.push(i);
+                if (in_degrees[i]==0) que.push_back(i);
             }
 
             // 「キューに入っている頂点を削除する」処理を繰り返す
             while(!que.empty()) {
-                // T u = que.front(); que.pop_front();
-                T u = que.top(); que.pop();
+                T u = que.front(); que.pop_front();
 
                 // 頂点uを削除するので、頂点uに隣接している頂点の入次数を減らす
                 for(auto v: G[u]) {
                     this->in_degrees[v]--;
-                    // if (this->in_degrees[v] == 0) que.push_back(v);  // 入次数が0になった頂点は、キューに追加する
-                    if (this->in_degrees[v] == 0) que.push(v);  // 入次数が0になった頂点は、キューに追加する
+                    if (this->in_degrees[v] == 0) que.push_back(v);  // 入次数が0になった頂点は、キューに追加する
                 }
 
                 this->dag.emplace_back(u);
@@ -75,6 +69,44 @@ class DAG {
         }
 };
 
+void test0(){
+    cout << "===test0===" << endl;
+    // D - Restricted Permutationの入力例1を試す
+    // https://atcoder.jp/contests/abc223/tasks/abc223_d
+    long long N = 4;
+
+    // DAGの宣言
+    DAG dag = DAG<long long>(N);
+
+    // 辺を追加する
+    // 1 → 0
+    //   ↘
+    // 2 → 3
+    dag.add_edge(1, 0);
+    dag.add_edge(2, 3);
+    dag.add_edge(1, 3);
+
+    // DAGの構築
+    dag.build();
+
+    // DAGの構築成功判定
+    if (dag.is_build_success()) {
+        cout << "Success" << endl;
+
+        // DAGの出力（頂点をトポロジカル順序で出力）
+        for(long long i=0; i<N; i++) {
+            cout << dag.dag[i] << endl;
+        }
+    } else {
+        cout << "Failed" << endl;
+    }
+    // Success
+    // 1
+    // 2
+    // 0
+    // 3
+}
+
 void test1(){
     cout << "===test1===" << endl;
     // AOJの入力例を試す
@@ -85,6 +117,9 @@ void test1(){
     DAG dag = DAG<long long>(N);
 
     // 辺を追加する
+    // 0 → 1 → 2
+    //   ↗     ↑
+    // 3 → 4 → 5
     dag.add_edge(0, 1);
     dag.add_edge(1, 2);
     dag.add_edge(3, 1);
@@ -123,6 +158,9 @@ void test2() {
     DAG dag = DAG<long long>(N);
 
     // 辺を追加する
+    // 0 → 1 → 2
+    //     ↑
+    // 3 → 4 → 5
     dag.add_edge(0, 1);
     dag.add_edge(1, 2);
     dag.add_edge(3, 4);
@@ -147,9 +185,9 @@ void test2() {
     // 0
     // 3
     // 4
+    // 5
     // 1
     // 2
-    // 5
 }
 
 void test3() {
@@ -161,6 +199,8 @@ void test3() {
     DAG dag = DAG<long long>(N);
 
     // 辺を追加する
+    // 0 → 1 → 2 → 3
+    //   ↖ ←----← ↙
     dag.add_edge(0, 1);
     dag.add_edge(1, 2);
     dag.add_edge(2, 3);
@@ -185,16 +225,16 @@ void test3() {
 
 void test4() {
     cout << "===test4===" << endl;
-    // 以下のようなグラフでも、トポロジカルソートは成功したとみなす
-    // 0 -> 1
-    // 2 -> 3 -> 4
-    // 5
     long long N = 6;
 
     // DAGの宣言
     DAG dag = DAG<long long>(N);
 
     // 辺を追加する
+    // 以下のようなグラフでも、トポロジカルソートは成功したとみなす
+    // 0 → 1
+    // 2 → 3 → 4
+    // 5
     dag.add_edge(2, 3);
     dag.add_edge(3, 4);
     dag.add_edge(0, 1);
@@ -215,14 +255,15 @@ void test4() {
     }
     // Success
     // 0
-    // 1
     // 2
+    // 5
+    // 1
     // 3
     // 4
-    // 5
 }
 
 int main(int argc, char const *argv[]){
+    test0();
     test1();
     test2();
     test3();
