@@ -149,7 +149,7 @@ struct UnionFindVerSize {
         T calc_group_num() {
             /* グループ数を計算して返す */
             T ans = 0;
-            for (T i=0; i<this->parents.size(); i++) {
+            for (T i=0; i<(T)this->parents.size(); i++) {
                 if (i == this->find_root(i)) ans++;
             }
             return ans;
@@ -171,7 +171,63 @@ struct UnionFindVerSize {
 };
 
 
-int main() {
+/***クラスカル法
+ * Descriptions:
+ *  最小全域木と、最小全域木のコストを求める
+ * Returns:
+ *  pair<UnionFind, long long>
+ *   最小全域木(UnionFind)
+ *   最小全域木のコスト(long long)
+ * Notes:
+ *  クラスカル法自体の計算量はO(|E| log|V|)
+ *  ただし内部でUnionFindを実行している
+ ***/
+struct edge {long long u, v, cost; };  // 頂点uと頂点vを結ぶ無向辺（コスト：cost）
+
+bool comp(const edge& e1, const edge& e2) {
+    return e1.cost < e2.cost;
+}
+
+pair<UnionFindVerSize<long long>, long long> kruskal(vector<edge> es, long long V, long long E) {
+    sort(es.begin(), es.end(), comp);  // edge.costが小さい順にソートする
+    UnionFindVerSize uf = UnionFindVerSize<long long>(V);
+
+    long long res = 0;  // 最小全域木のコスト
+    for (long long i=0; i<E; i++) {
+        edge e = es[i];
+        if (!uf.is_same_group(e.u, e.v)) {
+            uf.unite(e.u, e.v);
+            res += e.cost;
+        }
+    }
+    return {uf, res};
+}
+
+void test2() {
+    cout << "===test2===" << endl;
+    // クラスカル法のテストコード
+    long long V = 5;  // 頂点数
+    long long E = 8;  // 辺数
+    vector<edge> es(E);
+
+    // グラフを構築
+    es[0] = edge{0, 1, 10};
+    es[1] = edge{0, 3, 5};
+    es[2] = edge{1, 2, 1};
+    es[3] = edge{1, 3, 1000};
+    es[4] = edge{1, 4, 500};
+    es[5] = edge{2, 3, 100};
+    es[6] = edge{2, 4, 10000};
+    es[7] = edge{3, 4, 5000};
+
+    // 最小全域木と最小全域木のコストを求める
+    auto [uf, cost] = kruskal(es, V, E);
+    cout << "MST Cost: " << cost << endl;
+}
+
+void test1() {
+    cout << "===test1===" << endl;
+    // UnionFindのテストコード
     int N = 10;
     UnionFindVerSize<int> uf = UnionFindVerSize<int>(N);
 
@@ -190,6 +246,10 @@ int main() {
     // false
     cout << uf.calc_group_num() << endl;
     // 5
+}
 
+int main() {
+    test1();
+    test2();
     return 0;
 }
