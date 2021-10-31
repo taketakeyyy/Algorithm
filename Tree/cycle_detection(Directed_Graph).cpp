@@ -1,25 +1,25 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-/***無向グラフの閉路検出(DFS)
+/***有向グラフの閉路検出(DFS)
  * 閉路がある：trueを返す
  ***/
-bool cycle_detection(long long now, long long parent, vector<vector<long long>> const &graph, set<long long> &visited) {
+bool cycle_detection(long long now, vector<vector<long long>> const &graph, set<long long> &visited) {
     if (visited.count(now)) return true;
     visited.insert(now);
 
     for(auto v: graph[now]) {
-        if (v == parent) continue;
-        if (cycle_detection(v, now, graph, visited)) return true;
+        if (cycle_detection(v, graph, visited)) return true;
     }
 
+    visited.erase(now);
     return false;
 }
 
 void test1() {
     cout << "===test1===" << endl;
     long long N = 8;  // 頂点数
-    // 以下の無向辺が与えられる
+    // 以下の有向辺が与えられる
     vector<pair<long long, long long>> edges = {
         make_pair(0, 1),
         make_pair(0, 2),
@@ -35,12 +35,11 @@ void test1() {
     vector<vector<long long>> graph(N);
     for(auto [u, v]: edges) {
         graph[u].push_back(v);
-        graph[v].push_back(u);
     }
 
-    // 無向グラフの閉路検出
+    // 有向グラフの閉路検出
     set<long long> visited;
-    bool is_cycle = cycle_detection(0, -1, graph, visited);
+    bool is_cycle = cycle_detection(0, graph, visited);
 
     // 出力
     if (is_cycle) {
@@ -49,13 +48,13 @@ void test1() {
     else {
         cout << "Not Found." << endl;
     }
-    // Found Cycle!
+    // Not Found.
 }
 
 void test2() {
     cout << "===test2===" << endl;
     long long N = 6;  // 頂点数
-    // 以下の無向辺が与えられる
+    // 以下の有向辺が与えられる
     vector<pair<long long, long long>> edges = {
         make_pair(0, 1),
         make_pair(1, 2),
@@ -68,12 +67,11 @@ void test2() {
     vector<vector<long long>> graph(N);
     for(auto [u, v]: edges) {
         graph[u].push_back(v);
-        graph[v].push_back(u);
     }
 
-    // 無向グラフの閉路検出
+    // 有向グラフの閉路検出
     set<long long> visited;
-    bool is_cycle = cycle_detection(0, -1, graph, visited);
+    bool is_cycle = cycle_detection(0, graph, visited);
 
     // 出力
     if (is_cycle) {
@@ -88,7 +86,7 @@ void test2() {
 void test3() {
     cout << "===test3===" << endl;
     long long N = 5;  // 頂点数
-    // 以下の無向辺が与えられる
+    // 以下の有向辺が与えられる
     vector<pair<long long, long long>> edges = {
         make_pair(0, 1),
         make_pair(1, 2),
@@ -101,12 +99,11 @@ void test3() {
     vector<vector<long long>> graph(N);
     for(auto [u, v]: edges) {
         graph[u].push_back(v);
-        graph[v].push_back(u);
     }
 
-    // 無向グラフの閉路検出
+    // 有向グラフの閉路検出
     set<long long> visited;
-    bool is_cycle = cycle_detection(0, -1, graph, visited);
+    bool is_cycle = cycle_detection(0, graph, visited);
 
     // 出力
     if (is_cycle) {
