@@ -48,6 +48,7 @@ void test1() {
     vector<ll> A = {5, 1, 3, 2, 4};
     LIS lis = LIS(A);
     cout << lis.answer << endl;
+    // 3 (1 2 4)
 }
 
 void test2() {
@@ -56,6 +57,7 @@ void test2() {
     vector<ll> A = {1, 1, 1};
     LIS lis = LIS(A);
     cout << lis.answer << endl;
+    // 1 (1)
 }
 
 void test3() {
@@ -64,6 +66,7 @@ void test3() {
     vector<ll> A = {4, 2, 3, 1, 5};
     LIS lis = LIS(A);
     cout << lis.answer << endl;
+    // 3 (2 3 5)
 }
 
 int main() {
