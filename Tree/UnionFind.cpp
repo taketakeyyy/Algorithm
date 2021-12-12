@@ -19,12 +19,14 @@ struct UnionFindVerDepth {
     private:
         vector<T> depths;   // グループの深さ
         vector<T> parents;  // 親の番号を格納する。自分が親の場合は自分の番号になり、それがそのグループの番号になる
+        T group_num;  // 連結成分の個数
 
     public:
         UnionFindVerDepth(T N=0): depths(N,-1), parents(N) {
             for (T i=0; i<N; i++) {
                 parents[i] = i;
             }
+            this->group_num = N;
         }
 
         T find_root(T x) {
@@ -47,6 +49,7 @@ struct UnionFindVerDepth {
                 this->parents[gy] = gx;
                 if (this->depths[gx] == this->depths[gy]) this->depths[gx] += 1;
             }
+            this->group_num--;
         }
 
         T get_depth(T x) {
@@ -59,13 +62,9 @@ struct UnionFindVerDepth {
             return this->find_root(x) == this->find_root(y);
         }
 
-        T calc_group_num() {
-            /* グループ数を計算して返す */
-            T ans = 0;
-            for (T i=0; i<this->parents.size(); i++) {
-                if (i == this->find_root(i)) ans++;
-            }
-            return ans;
+        T get_group_num() {
+            /* 連結成分の個数を返す */
+            return this->group_num;
         }
 
         void print_parents() {
@@ -105,12 +104,14 @@ struct UnionFindVerSize {
     private:
         vector<T> sizes;   // グループのサイズ
         vector<T> parents;  // 親の番号を格納する。自分が親の場合は自分の番号になり、それがそのグループの番号になる
+        T group_num;  // 連結成分の個数
 
     public:
         UnionFindVerSize(T N=0): sizes(N,1), parents(N) {
             for (T i=0; i<N; i++) {
                 parents[i] = i;
             }
+            this->group_num = N;
         }
 
         T find_root(T x) {
@@ -134,6 +135,7 @@ struct UnionFindVerSize {
                 this->parents[gy] = gx;
                 this->sizes[gx] += this->sizes[gy];
             }
+            this->group_num--;
         }
 
         T get_size(T x) {
@@ -146,13 +148,9 @@ struct UnionFindVerSize {
             return this->find_root(x) == this->find_root(y);
         }
 
-        T calc_group_num() {
-            /* グループ数を計算して返す */
-            T ans = 0;
-            for (T i=0; i<(T)this->parents.size(); i++) {
-                if (i == this->find_root(i)) ans++;
-            }
-            return ans;
+        T get_group_num() {
+            /* 連結成分の個数を返す */
+            return this->group_num;
         }
 
         void print_parents() {
@@ -244,7 +242,7 @@ void test1() {
     // 4
     cout << (uf.is_same_group(3, 4)?"true" : "false") << endl;
     // false
-    cout << uf.calc_group_num() << endl;
+    cout << uf.get_group_num() << endl;
     // 5
 }
 
