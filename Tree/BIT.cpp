@@ -17,32 +17,66 @@ bit[3] := v[3]
 bit[4] := v[1]+v[2]+v[3]+v[4]
 bit[5] := v[5]
 ***/
+template <typename T>
 class BIT {
-    public:
-        int N;  // 要素数
-        vector<int> bit;  // bit配列
+    private:
+        /* 引数チェック */
+        void _check_args_add(T a) {
+            if (a <= 0 || this->N < a) {
+                try {
+                    throw "Error BIT.add(a, w): Arg 'a' MUST '1 <= a <= N'.";
+                }
+                catch (const char *str) {
+                    cerr << str << endl;
+                    terminate();
+                }
+            }
+        }
 
-        BIT(int n) {
+        /* 引数チェック */
+        void _check_args_sum(T a) {
+            if (a <= 0 || this->N < a) {
+                try {
+                    throw "Error BIT.add(a, w): Arg 'a' MUST '1 <= a <= N'.";
+                }
+                catch (const char *str) {
+                    cerr << str << endl;
+                    terminate();
+                }
+            }
+        }
+
+    public:
+        T N;  // 要素数
+        vector<T> bit;  // bit配列
+
+        BIT(T n) {
             this->N = n;
             this->bit.resize(n+1, 0);
         }
 
-        void add(int a, int w) {
+
+        void add(T a, T w) {
             /***v[a]番目に値wを加える
             O(logN)
             ***/
-            int x = a;
+            // エラー処理
+            _check_args_add(a);
+
+            T x = a;
             while (x <= this->N) {
                 this->bit[x] += w;
                 x += x&-x;
             }
         }
 
-        int sum(int a) {
+        T sum(T a) {
             /***vの区間[1,a]の和を求める
             O(logN)
             ***/
-            int ret = 0; int x = a;
+            _check_args_sum(a);
+
+            T ret = 0; T x = a;
             while (x > 0) {
                 ret += this->bit[x];
                 x -= x&-x;
@@ -65,7 +99,7 @@ void test1() {
     ***/
     /* 初期化 */
     int N = 100;
-    BIT bit = BIT(N);
+    BIT bit = BIT<int>(N);
     for (int i=1; i<N+1; i++) {
         bit.add(i, i);
     }
@@ -86,8 +120,19 @@ void test1() {
     // sum of [30,50]:840
 }
 
+void test_error() {
+    /*** BITの範囲外にアクセス
+     **/
+    int N = 100;
+    BIT<int> bit(N);
+    bit.sum(0);
+    // Error BIT.add(a, w): Arg 'a' MUST '1 <= a <= N'. （例外が発生して異常終了）
+}
+
 
 int main(int argc, char const *argv[]){
     test1();
+
+    test_error();
     return 0;
 }
