@@ -46,7 +46,8 @@ istream& operator>>(istream& is, mint& a) { return is >> a.x;}
 ostream& operator<<(ostream& os, const mint& a) { return os << a.x;}
 
 
-void test(void) {
+void test1(void) {
+    cout << "===test1===" << endl;
     /* 基本的な使い方 */
     mint a, b;
     a = 100;
@@ -78,7 +79,18 @@ void test(void) {
     cout << c << endl;  // 333333369
 }
 
+void test2() {
+    cout << "===test2===" << endl;
+    mint a = -1;
+    cout << a << endl;
+    // 1000000006
+
+    cout << a + 10 << endl;
+    // 9
+}
+
 int main(int argc, char const *argv[]){
-    test();
+    test1();
+    test2();
     return 0;
 }
