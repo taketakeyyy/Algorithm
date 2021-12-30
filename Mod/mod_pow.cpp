@@ -12,7 +12,8 @@ T mod_pow(T a, T n, T m) {
      *  計算量：O(log n)
      **/
     if (n==0) return 1;
-    T res = mod_pow(a*a%m, n/2, m);
+    a %= m;
+    T res = mod_pow(a*a, n/2, m);
     if (n&1) res = res * a % m;
     return res;
 }
