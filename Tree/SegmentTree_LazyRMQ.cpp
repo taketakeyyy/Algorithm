@@ -14,17 +14,17 @@ class SegmentTree_LazyRMQ {
 
     private:
         const T INF = numeric_limits<T>::max();
-        int _lst2node(int i) {
+        T _lst2node(T i) {
             /* 元の配列lstのi番目を、セグ木のノード番号に変換する */
             return i+this->N-1;
         }
 
-        int _node2lst(int i) {
+        T _node2lst(T i) {
             /* セグ木のノードのi番目を、元の配列 lst の添字に変換する */
             return i - (this->N-1);
         }
 
-        void _eval(int k) {
+        void _eval(T k) {
             /* 遅延評価関数 */
             if (this->lazy[k] == this->INF) return;
             if (k < this->N-1) {
@@ -36,7 +36,7 @@ class SegmentTree_LazyRMQ {
             this->lazy[k] = this->INF;
         }
 
-        void _update(int a, int b, T x, int k, int l, int r) {
+        void _update(T a, T b, T x, T k, T l, T r) {
             /* 区間 [a, b) に対して、担当区間 [l, r) のノード k が応答する */
             this->_eval(k);
             if (a<=l && r<=b) {
@@ -52,7 +52,7 @@ class SegmentTree_LazyRMQ {
             }
         }
 
-        T _query(int a, int b, int k, int l, int r) {
+        T _query(T a, T b, T k, T l, T r) {
             /* 区間 [a,b) のクエリに対して、担当区間 [l,r) のノード k が応答する */
             this->_eval(k);
             if (r<=a || b<=l) {
@@ -69,7 +69,7 @@ class SegmentTree_LazyRMQ {
             return min(ret1, ret2);
         }
 
-        int _find_rightest(int a, int b, T x, int k, int l, int r) {
+        T _find_rightest(T a, T b, T x, T k, T l, T r) {
             /* 区間 [a, b) に対して、担当区間 [l, r) のノード k が応答する */
             this->_eval(k);
             if (this->nodes[k]>x || r <= a || b <= l) {
@@ -81,7 +81,7 @@ class SegmentTree_LazyRMQ {
                 return this->_node2lst(k);
             }
             else {
-                int ret = this->_find_rightest(a, b, x, 2*k+2, (l+r)/2, r);
+                T ret = this->_find_rightest(a, b, x, 2*k+2, (l+r)/2, r);
                 if (ret != a-1) {
                     // 右の部分木を見て a-1 以外なら終了
                     return ret;
@@ -93,7 +93,7 @@ class SegmentTree_LazyRMQ {
             }
         }
 
-        int _find_leftest(int a, int b, T x, int k, int l, int r) {
+        T _find_leftest(T a, T b, T x, T k, T l, T r) {
             /* 区間 [a, b) に対して、担当区間 [l, r) のノード k が応答する */
             this->_eval(k);
             if (this->nodes[k]>x || r <= a || b <= l) {
@@ -105,7 +105,7 @@ class SegmentTree_LazyRMQ {
                 return this->_node2lst(k);
             }
             else {
-                int ret = this->_find_leftest(a, b, x, 2*k+1, l, (l+r)/2);
+                T ret = this->_find_leftest(a, b, x, 2*k+1, l, (l+r)/2);
                 if (ret != b) {
                     // 左の部分木を見て b 以外なら終了
                     return ret;
@@ -118,17 +118,17 @@ class SegmentTree_LazyRMQ {
         }
 
     public:
-        int N;  // セグ木の葉の数
-        int list_size;  // 元の配列(lst)のサイズ
+        T N;  // セグ木の葉の数
+        T list_size;  // 元の配列(lst)のサイズ
         vector<T> nodes, lazy;  // セグ木のノードと、遅延評価用のノード
-        SegmentTree_LazyRMQ(int n) {
+        SegmentTree_LazyRMQ(T n) {
             /***
              * Args:
-             *  n(int): 元の配列の要素数
+             *  n(T): 元の配列の要素数
              ***/
             this->list_size = n;
 
-            int x = 1;
+            T x = 1;
             while (n > x) x *= 2;
             this->N = x;
 
@@ -136,37 +136,37 @@ class SegmentTree_LazyRMQ {
             this->lazy.assign(this->N*2-1, this->INF);
         }
 
-        void set(int i, T x) {
+        void set(T i, T x) {
             /* セグ木の葉に値をセットする（セットするだけ。セグ木を構築するときはbuild()を呼ぶ） */
-            int ni = this->_lst2node(i);
+            T ni = this->_lst2node(i);
             this->nodes[ni] = x;
         }
 
         void build() {
             /* セグ木を構築する */
-            for (int k=this->N-2; k>=0; k--) {
+            for (T k=this->N-2; k>=0; k--) {
                 this->nodes[k] = min(this->nodes[2*k+1], this->nodes[2*k+2]);
             }
         }
 
-        void update(int a, int b, T x) {
+        void update(T a, T b, T x) {
             /* 区間 [a, b) の値を x に変更し、セグ木全体を更新する */
             this->_update(a, b, x, 0, 0, this->N);
         }
 
-        T query(int a, int b) {
+        T query(T a, T b) {
             /* 区間 [a,b) のクエリに応答する */
             return this->_query(a, b, 0, 0, this->N);
         }
 
-        int find_rightest(int a, int b, T x) {
+        T find_rightest(T a, T b, T x) {
             /* 区間 [a, b) で x 以下の要素を持つ最右位置を返す
              * 見つからなかった場合、-1を返す
              */
             return _find_rightest(a, b, x, 0, 0, this->N);
         }
 
-        int find_leftest(int a, int b, T x) {
+        T find_leftest(T a, T b, T x) {
             /* 区間 [a, b) で x 以下の要素を持つ最左位置を返す
              * 見つからなかった場合、list_size以上の番号を返す
              */
@@ -208,6 +208,10 @@ void test1(){
     /* lst全体の区間で、2以下の最左位置を求める */
     cout << "lazyrmq.find_leftest(0, lst.size(), 2): " << lazyrmq.find_leftest(0, lst.size(), 2) << endl;
     // lazyrmq.find_leftest(0, lst.size(), 2): 13
+
+    /* [14, lst.size())の区間で、2以下の最左位置を求める */
+    cout << "lazyrmq.find_leftest(14, lst.size(), 2): " << lazyrmq.find_leftest(14, lst.size(), 2) << endl;
+    // lazyrmq.find_leftest(14, lst.size(), 2): 14
 }
 
 void test2(){
