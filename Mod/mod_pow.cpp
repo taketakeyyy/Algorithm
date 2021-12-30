@@ -14,7 +14,7 @@ T mod_pow(T a, T n, T m) {
     if (n==0) return 1;
     a %= m;
     T res = mod_pow(a*a, n/2, m);
-    if (n&1) res = res * a % m;
+    if (n&1) res = (res * a) % m;
     return res;
 }
 
