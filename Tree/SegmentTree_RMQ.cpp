@@ -2,16 +2,17 @@
 using namespace std;
 
 
+template <typename T>
 class SegmentTree_RMQ {
     /* Renge Minimum Query */
 
     private:
-        int _lst2node(int i) {
+        T _lst2node(T i) {
             /* 元の配列 lst[i] は、セグ木の i+(葉の数)-1 番目のノード */
             return i+this->n-1;
         }
 
-        int _find(int a, int b, int k, int l, int r) {
+        T _find(T a, T b, T k, T l, T r) {
             /* 区間 [a,b) のクエリに対して、担当区間 [l,r) のノード k が応答する */
             if (r<=a || b<=l) {
                 // 区間がかぶらない場合
@@ -22,23 +23,23 @@ class SegmentTree_RMQ {
                 return this->nodes[k];
             }
             // それ以外
-            int ret1 = this->_find(a, b, 2*k+1, l, (l+r)/2);  // 左の子に聞く
-            int ret2 = this->_find(a, b, 2*k+2, (l+r)/2, r);  // 右の子に聞く
+            T ret1 = this->_find(a, b, 2*k+1, l, (l+r)/2);  // 左の子に聞く
+            T ret2 = this->_find(a, b, 2*k+2, (l+r)/2, r);  // 右の子に聞く
             return min(ret1, ret2);
         }
 
     public:
-        int max_num;  // セグ木のノードの最大値
-        int n;  // セグ木の葉の数
-        vector<int> nodes;  // セグ木のノード
-        SegmentTree_RMQ(vector<int> lst, int max_num=INT_MAX) {
+        T max_num;  // セグ木のノードの最大値
+        T n;  // セグ木の葉の数
+        vector<T> nodes;  // セグ木のノード
+        SegmentTree_RMQ(vector<T> lst, T max_num) {
             /***
              * Args:
-             *  lst(vector<int>) 元の配列
-             *  max_num(int): セグ木の各ノードの初期値
+             *  lst(vector<T>) 元の配列
+             *  max_num(T): セグ木の各ノードの初期値
              ***/
             this->max_num = max_num;
-            int i = 1; int total = 1;
+            T i = 1; T total = 1;
             while (1) {
                 if (lst.size() <= i) break;
                 i *= 2;
@@ -46,23 +47,23 @@ class SegmentTree_RMQ {
             }
             this->n = i;
             this->nodes.resize(total, this->max_num);
-            for (int i=0; i<lst.size(); i++) {
+            for (T i=0; i<lst.size(); i++) {
                 this->update(i, lst[i]);
             }
         }
 
-        void update(int i, int x) {
+        void update(T i, T x) {
             /* 元の配列 lst[i] に対応するセグ木のノード値をxに変更し、セグ木全体を更新する */
-            int ni = this->_lst2node(i);
+            T ni = this->_lst2node(i);
             this->nodes[ni] = x;
             while (ni > 0) {
                 ni = (ni-1)/2;
-                int l = ni*2+1; int r = ni*2+2;
+                T l = ni*2+1; T r = ni*2+2;
                 this->nodes[ni] = min(this->nodes[l], this->nodes[r]);
             }
         }
 
-        int query(int a, int b) {
+        T query(T a, T b) {
             /* 区間 [a,b) のクエリに応答する */
             return this->_find(a, b, 0, 0, this->n);
         }
@@ -74,7 +75,7 @@ void test1(){
     vector<int> lst = {7, 3, 5, 4, 8, 9, 1, 0, 1, 3, 9, 4, 6, 2, 1, 9, 4, 5, 6, 7, 3, 5, 4, 1, 1, 2, 6, 8, 9, 5, 3};
 
     /* lst を RMQ化する */
-    SegmentTree_RMQ rmq = SegmentTree_RMQ(lst);
+    SegmentTree_RMQ rmq = SegmentTree_RMQ<int>(lst, INT_MAX);
 
     /* lst[1:6]の最小値を求める */
     cout << "rmq.query(1,6)=" << rmq.query(1,6) << endl;
