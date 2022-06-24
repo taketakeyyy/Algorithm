@@ -8,11 +8,23 @@ using ll = long long;
 using P = pair<int,int>;
 
 
-/* 自動でMODをとるModInt
-https://youtu.be/L8grWxBlIZ4?t=9858
-https://youtu.be/ERZuLAxZffQ?t=4807 : optimize
-https://youtu.be/8uowVvQ_-Mo?t=1329 : division
-*/
+/** 自動でMODをとるModInt型
+ *
+ * Usage
+ *   // 基本的な使い方
+ *   mint a, b;
+ *   a = 100;
+ *   b = a + MOD;
+ *   // istreamとostreamをオーバロードしてるので、mint型も普通に入出力できる
+ *   cout << b << endl;  // 100
+ *   // 明示的にlong long型を出力するときは.xを参照する
+ *   cout << b.x << endl;  // 100
+ *
+ * References
+ *  https://youtu.be/L8grWxBlIZ4?t=9858
+ *  https://youtu.be/ERZuLAxZffQ?t=4807 : optimize
+ *  https://youtu.be/8uowVvQ_-Mo?t=1329 : division
+ */
 struct mint {
   ll x; // typedef long long ll;
   mint(ll x=0):x((x%MOD+MOD)%MOD){}
@@ -89,7 +101,7 @@ void test2() {
     // 9
 }
 
-int main(int argc, char const *argv[]){
+int main() {
     test1();
     test2();
     return 0;

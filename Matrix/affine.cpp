@@ -5,6 +5,35 @@ using namespace std;
  *
  * 2次元座標のアフィン変換
  *
+ * Usage:
+ *   // Affine変換用の行列を作成
+ *   Affine<double> A = Affine<double>();
+ *
+ *   // 最初はx=1, y=2
+ *   double x=1.0, y=2.0;  // 変換前の座標
+ *   double nx, ny;        // 変換後の座標
+ *   cout << x << " " << y << endl;  // 1 2
+ *
+ *   // 時計回りに90度回転
+ *   A.rotate_deg(-90);
+ *   tie(nx, ny) = A.calc(x, y);
+ *   cout << nx << " " << ny << endl;  // 2 -1
+ *
+ *   // x=3で対称な位置に移動
+ *   A.reflectX(3);
+ *   tie(nx, ny) = A.calc(x, y);
+ *   cout << nx << " " << ny << endl;  // 4 -1
+ *
+ *   // 反時計回りに90度回転
+ *   A.rotate_deg(90);
+ *   tie(nx, ny) = A.calc(x, y);
+ *   cout << nx << " " << ny << endl;  // 1 4
+ *
+ *   // y=2で対称な位置に移動
+ *   A.reflectY(2);
+ *   tie(nx, ny) = A.calc(x, y);
+ *   cout << nx << " " << ny << endl;  // 1 0
+ *
  **/
 template <typename T>
 class Affine {
