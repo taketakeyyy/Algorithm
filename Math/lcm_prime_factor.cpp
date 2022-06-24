@@ -22,15 +22,17 @@ map<T, T> prime_factor_ver_map(T n) {
 }
 
 template <typename T>
-void lcm_prime_factor(map<T,T> &mpa, map<T,T> mpb) {
+map<T,T> lcm_prime_factor(const map<T,T> &mpa, const map<T,T> &mpb) {
     /* 最小公倍数lcm(a,b)の結果を、素因数分解で保持する
      * Args:
      *   mpa: aの素因数分解
      *   mpb: bの素因数分解
      */
+    map<T,T> res;
     for(auto [p, q]: mpb) {
-        mpa[p] = max(mpa[p], mpb[p]);
+        res[p] = max(mpa.at(p), mpb.at(p));
     }
+    return res;
 }
 
 
@@ -41,11 +43,11 @@ void test() {
     int b = 300;
     map<int,int> mpa = prime_factor_ver_map<int>(a);
     map<int,int> mpb = prime_factor_ver_map<int>(b);
-    lcm_prime_factor(mpa, mpb);
+    map<int,int> mplcm = lcm_prime_factor<int>(mpa, mpb);
 
     // 出力
     int ans = 1;
-    for(auto [p,q]:mpa) {
+    for(auto [p,q]: mplcm) {
         for(int i=0; i<q; i++) ans *= p;
     }
     cout << ans << endl;
@@ -59,11 +61,11 @@ void test2() {
     int b = 6789;
     map<int,int> mpa = prime_factor_ver_map<int>(a);
     map<int,int> mpb = prime_factor_ver_map<int>(b);
-    lcm_prime_factor(mpa, mpb);
+    map<int,int> mplcm = lcm_prime_factor<int>(mpa, mpb);
 
     // 出力
     int ans = 1;
-    for(auto [p,q]:mpa) {
+    for(auto [p,q]: mplcm) {
         for(int i=0; i<q; i++) ans *= p;
     }
     cout << ans << endl;
