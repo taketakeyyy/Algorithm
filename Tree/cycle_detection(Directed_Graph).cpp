@@ -2,14 +2,25 @@
 using namespace std;
 
 /***有向グラフの閉路検出(DFS)
- * 閉路がある：trueを返す
+ *
+ * Args:
+ *  now: 現在位置の頂点番号
+ *  G: グラフ
+ *  visited: 訪れたことのある頂点の集合
+ *
+ * Returns:
+ *  閉路がある:trueを返す
+ *
+ * Example:
+ *  bool is_cycle = cycle_detection_in_directed_graph<long long>(0, G, visited);
  ***/
-bool cycle_detection(long long now, vector<vector<long long>> const &graph, set<long long> &visited) {
+template<typename T>
+bool cycle_detection_in_directed_graph(T now, vector<set<T>> const &G, set<T> &visited) {
     if (visited.count(now)) return true;
     visited.insert(now);
 
-    for(auto v: graph[now]) {
-        if (cycle_detection(v, graph, visited)) return true;
+    for(auto v: G[now]) {
+        if (cycle_detection_in_directed_graph(v, G, visited)) return true;
     }
 
     visited.erase(now);
@@ -32,14 +43,14 @@ void test1() {
     };
 
     // グラフ構築
-    vector<vector<long long>> graph(N);
+    vector<set<long long>> G(N);
     for(auto [u, v]: edges) {
-        graph[u].push_back(v);
+        G[u].insert(v);
     }
 
     // 有向グラフの閉路検出
     set<long long> visited;
-    bool is_cycle = cycle_detection(0, graph, visited);
+    bool is_cycle = cycle_detection_in_directed_graph<long long>(0, G, visited);
 
     // 出力
     if (is_cycle) {
@@ -64,14 +75,14 @@ void test2() {
     };
 
     // グラフ構築
-    vector<vector<long long>> graph(N);
+    vector<set<long long>> G(N);
     for(auto [u, v]: edges) {
-        graph[u].push_back(v);
+        G[u].insert(v);
     }
 
     // 有向グラフの閉路検出
     set<long long> visited;
-    bool is_cycle = cycle_detection(0, graph, visited);
+    bool is_cycle = cycle_detection_in_directed_graph<long long>(0, G, visited);
 
     // 出力
     if (is_cycle) {
@@ -96,14 +107,14 @@ void test3() {
     };
 
     // グラフ構築
-    vector<vector<long long>> graph(N);
+    vector<set<long long>> G(N);
     for(auto [u, v]: edges) {
-        graph[u].push_back(v);
+        G[u].insert(v);
     }
 
     // 有向グラフの閉路検出
     set<long long> visited;
-    bool is_cycle = cycle_detection(0, graph, visited);
+    bool is_cycle = cycle_detection_in_directed_graph<long long>(0, G, visited);
 
     // 出力
     if (is_cycle) {

@@ -2,15 +2,27 @@
 using namespace std;
 
 /***無向グラフの閉路検出(DFS)
- * 閉路がある：trueを返す
+ *
+ * Args:
+ *  now: 現在の頂点
+ *  parent: 前回の頂点
+ *  G: グラフ
+ *  visited: 訪問済みの頂点集合
+ *
+ * Returns:
+ *  true（閉路がある） / false（閉路なし）
+ *
+ * Example:
+ *  bool is_cycle = cycle_detection_in_undirected_graph<long long>(0, -1, G, visited);
  ***/
-bool cycle_detection(long long now, long long parent, vector<vector<long long>> const &graph, set<long long> &visited) {
+template<typename T>
+bool cycle_detection_in_undirected_graph(T now, T parent, vector<set<T>> const &G, set<T> &visited) {
     if (visited.count(now)) return true;
     visited.insert(now);
 
-    for(auto v: graph[now]) {
+    for(auto v: G[now]) {
         if (v == parent) continue;
-        if (cycle_detection(v, now, graph, visited)) return true;
+        if (cycle_detection_in_undirected_graph(v, now, G, visited)) return true;
     }
 
     return false;
@@ -32,15 +44,15 @@ void test1() {
     };
 
     // グラフ構築
-    vector<vector<long long>> graph(N);
+    vector<set<long long>> G(N);
     for(auto [u, v]: edges) {
-        graph[u].push_back(v);
-        graph[v].push_back(u);
+        G[u].insert(v);
+        G[v].insert(u);
     }
 
     // 無向グラフの閉路検出
     set<long long> visited;
-    bool is_cycle = cycle_detection(0, -1, graph, visited);
+    bool is_cycle = cycle_detection_in_undirected_graph<long long>(0, -1, G, visited);
 
     // 出力
     if (is_cycle) {
@@ -65,15 +77,15 @@ void test2() {
     };
 
     // グラフ構築
-    vector<vector<long long>> graph(N);
+    vector<set<long long>> G(N);
     for(auto [u, v]: edges) {
-        graph[u].push_back(v);
-        graph[v].push_back(u);
+        G[u].insert(v);
+        G[v].insert(u);
     }
 
     // 無向グラフの閉路検出
     set<long long> visited;
-    bool is_cycle = cycle_detection(0, -1, graph, visited);
+    bool is_cycle = cycle_detection_in_undirected_graph<long long>(0, -1, G, visited);
 
     // 出力
     if (is_cycle) {
@@ -98,15 +110,15 @@ void test3() {
     };
 
     // グラフ構築
-    vector<vector<long long>> graph(N);
+    vector<set<long long>> G(N);
     for(auto [u, v]: edges) {
-        graph[u].push_back(v);
-        graph[v].push_back(u);
+        G[u].insert(v);
+        G[v].insert(u);
     }
 
     // 無向グラフの閉路検出
     set<long long> visited;
-    bool is_cycle = cycle_detection(0, -1, graph, visited);
+    bool is_cycle = cycle_detection_in_undirected_graph<long long>(0, -1, G, visited);
 
     // 出力
     if (is_cycle) {
