@@ -1,12 +1,43 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+
 /**トポロジカルソート（DAG）
  * 閉路のない有向グラフ
  * 「どの頂点iについても、行き先の頂点番号が、頂点iよりも大きくなる」という性質を持つ
  *
  * Args:
  *  N(T): 頂点数（整数）
+ *
+ * Notes:
+ *  キューにpriority_queueを使っている
+ *  priority_queを使うとDAGの出力が辞書順になる（できるだけ昇順になる）
+ *  * 計算量
+ *    - priority_queを使うと、O(|E| log|V| +|V| log|V|)
+ *      - push と pop に log|V| かかる
+ *
+ * Usage:
+ *   // DAGの宣言
+ *   DAG dag = DAG<long long>(N);
+ *
+ *   // 辺を追加する
+ *   // 1 → 0
+ *   //   ↘
+ *   // 2 → 3
+ *   dag.add_edge(1, 0);
+ *   dag.add_edge(2, 3);
+ *   dag.add_edge(1, 3);
+ *
+ *   // DAGの構築
+ *   dag.build();
+ *
+ *   // DAGの構築成功なら、DAGを出力
+ *   if (dag.is_build_success()) {
+ *       // DAGの出力（頂点をトポロジカル順序で出力）
+ *       for(long long i=0; i<N; i++) {
+ *           cout << dag.dag[i] << endl;
+ *       }
+ *   }
  **/
 template<typename T>
 class DAG {
@@ -34,12 +65,6 @@ class DAG {
         }
 
         /*** DAGを構築する
-         * Notes:
-         *  キューにpriority_queueを使っている
-         *  priority_queを使うとDAGの出力が辞書順になる（できるだけ昇順になる）
-         *  * 計算量
-         *    - priority_queを使うと、O(|E| log|V| +|V| log|V|)
-         *      - push と pop に log|V| かかる
          ***/
         void build() {
             priority_queue<T, vector<T>, greater<T>> que;  // できるだけ昇順にしたい

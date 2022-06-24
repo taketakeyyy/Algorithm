@@ -7,6 +7,35 @@ using namespace std;
  *
  * Args:
  *  N(T): 頂点数（整数）
+ *
+ * Notes:
+ *  キューにdequeを使っている
+ *  * 計算量
+ *    - dequeを使うと、O(|E|+|V|)
+ *
+ * Usage:
+ *   // DAGの宣言
+ *   DAG dag = DAG<long long>(N);
+ *
+ *   // 辺を追加する
+ *   // 1 → 0
+ *   //   ↘
+ *   // 2 → 3
+ *   dag.add_edge(1, 0);
+ *   dag.add_edge(2, 3);
+ *   dag.add_edge(1, 3);
+ *
+ *   // DAGの構築
+ *   dag.build();
+ *
+ *   // DAGの構築成功なら、DAGを出力
+ *   if (dag.is_build_success()) {
+ *       // DAGの出力（頂点をトポロジカル順序で出力）
+ *       for(long long i=0; i<N; i++) {
+ *           cout << dag.dag[i] << endl;
+ *       }
+ *   }
+ *
  **/
 template<typename T>
 class DAG {
@@ -34,10 +63,6 @@ class DAG {
         }
 
         /*** DAGを構築する
-         * Notes:
-         *  キューにdequeを使っている
-         *  * 計算量
-         *    - dequeを使うと、O(|E|+|V|)
          ***/
         void build() {
             deque<T> que;
