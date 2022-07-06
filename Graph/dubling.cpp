@@ -27,9 +27,9 @@ void chmin(int& x, int y) { x = min(x,y); }
  *
  *  // ダブリングを使ってK回の遷移先を求める
  *  ll now = 0;  // 開始の頂点番号
- *  for(ll k=D-1; k>=0; k--) {
- *      if ((K>>k)&1) {
- *          now = doubling[k][now];
+ *  for(ll d=D-1; d>=0; k--) {
+ *      if ((K>>d)&1) {
+ *          now = doubling[d][now];
  *      }
  *  }
  *  cout << now << endl;  // K回の遷移後の頂点番号
@@ -37,13 +37,13 @@ void chmin(int& x, int y) { x = min(x,y); }
 template<typename T>
 vector<vector<T>> make_doubling(T N, T D, vector<T> const &A) {
     // ダブリングのグラフ構築
-    vector doubling(D, vector<ll>(N));  // doubling[k][i] := 頂点iから2^k辿った先の頂点は？
+    vector doubling(D, vector<ll>(N));  // doubling[d][i] := 頂点iから2^d辿った先の頂点は？
     for(ll i=0; i<N; i++) {
         doubling[0][i] = A[i];
     }
-    for(ll k=1; k<D; k++) {
+    for(ll d=1; d<D; d++) {
         for(ll i=0; i<N; i++) {
-            doubling[k][i] = doubling[k-1][doubling[k-1][i]];  // 2^{k}辿った先は、「2^{k-1}辿った先」を2回辿ればよい
+            doubling[d][i] = doubling[d-1][doubling[d-1][i]];  // 2^{d}辿った先は、「2^{d-1}辿った先」を2回辿ればよい
         }
     }
     return doubling;
@@ -65,9 +65,9 @@ void test1() {
 
     // ダブリングを使ってK回の遷移先を求める
     ll now = 0;  // 開始の頂点番号
-    for(ll k=D-1; k>=0; k--) {
-        if ((K>>k)&1) {
-            now = doubling[k][now];
+    for(ll d=D-1; d>=0; d--) {
+        if ((K>>d)&1) {
+            now = doubling[d][now];
         }
     }
     cout << now << endl;  // K回の遷移後の頂点番号
