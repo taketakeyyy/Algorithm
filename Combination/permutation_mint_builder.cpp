@@ -60,7 +60,7 @@ ostream& operator<<(ostream& os, const mint& a) { return os << a.x;}
  * @tparam T
  *
  * @details
- *  O(n)で前計算を構築し、cPrのクエリにO(1)で応答する
+ *  O(n)で前計算を構築し、nPrのクエリにO(1)で応答する
  *
  *  * 0!, 1!, ..., (n-1)!, n!
  *  * 1/n!, 1/(n-1)!, ..., 1/0!
