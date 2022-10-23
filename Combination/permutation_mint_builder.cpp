@@ -55,27 +55,27 @@ ostream& operator<<(ostream& os, const mint& a) { return os << a.x;}
 
 
 /**
- * @brief mintを使った高速なnCr計算
+ * @brief mintを使った高速なnPr計算
  *
  * @tparam T
  *
  * @details
- *  O(n)で前計算を構築し、nCrのクエリにO(1)で応答する
+ *  O(n)で前計算を構築し、cPrのクエリにO(1)で応答する
  *
  *  * 0!, 1!, ..., (n-1)!, n!
  *  * 1/n!, 1/(n-1)!, ..., 1/0!
  *  のテーブルをそれぞれO(n)で構築する。
  *
- *  それにより nCr = n!/(r!*(n-r)!) のクエリにO(1)で応答できる
+ *  それにより nPr = n!/(n-r)! のクエリにO(1)で応答できる
  *
  * @usage
- *  combination_mint_builder<ll> c(1e6);
- *  mint ans = c(6,2);  // 6C2
+ *  permutation_mint_builder<ll> p(1e6);
+ *  mint ans = p(6,2);  // 6P2
  */
 template <typename T>
-struct combination_mint_builder {
+struct permutation_mint_builder {
     vector<mint> fact, ifact;
-    combination_mint_builder(T n) {
+    permutation_mint_builder(T n) {
         assert(n < MOD);
         fact.resize(n+1); ifact.resize(n+1);
         fact[0] = 1;
@@ -85,27 +85,27 @@ struct combination_mint_builder {
     }
     mint operator()(T n, T r) {
         if (r<0 || r>n) return 0;
-        return fact[n]*ifact[r]*ifact[n-r];
+        return fact[n]*ifact[n-r];
     }
 };
 
 
 void test1(){
     cout << "===test1===" << endl;
-    combination_mint_builder<ll> c(1e6);
-    long long n=100, r=98;
-    mint ans = c(n, r);
+    permutation_mint_builder<ll> p(1e6);
+    ll n=20, r=5;
+    mint ans = p(n, r);
     cout << ans << endl;
-    // 4950
+    // 1860480
 }
 
 void test2(){
     cout << "===test2===" << endl;
-    combination_mint_builder<ll> c(1e6);
-    ll n=1e6, r=1000;
-    mint ans = c(n, r);
+    permutation_mint_builder<ll> p(1e6);
+    ll n=1e6, r=1e5;
+    mint ans = p(n, r);
     cout << ans << endl;
-    // 735067492
+    // 431436174
 }
 
 
