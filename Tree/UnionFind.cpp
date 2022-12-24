@@ -186,12 +186,12 @@ bool comp(const edge& e1, const edge& e2) {
     return e1.cost < e2.cost;
 }
 
-pair<UnionFindVerSize<long long>, long long> kruskal(vector<edge> es, long long V, long long E) {
+pair<UnionFindVerSize<long long>, long long> kruskal(vector<edge> es, long long V) {
     sort(es.begin(), es.end(), comp);  // edge.costが小さい順にソートする
     UnionFindVerSize uf = UnionFindVerSize<long long>(V);
 
     long long res = 0;  // 最小全域木のコスト
-    for (long long i=0; i<E; i++) {
+    for (long long i=0; i<(long long)es.size(); i++) {
         edge e = es[i];
         if (!uf.is_same_group(e.u, e.v)) {
             uf.unite(e.u, e.v);
@@ -201,27 +201,6 @@ pair<UnionFindVerSize<long long>, long long> kruskal(vector<edge> es, long long 
     return {uf, res};
 }
 
-void test2() {
-    cout << "===test2===" << endl;
-    // クラスカル法のテストコード
-    long long V = 5;  // 頂点数
-    long long E = 8;  // 辺数
-    vector<edge> es(E);
-
-    // グラフを構築
-    es[0] = edge{0, 1, 10};
-    es[1] = edge{0, 3, 5};
-    es[2] = edge{1, 2, 1};
-    es[3] = edge{1, 3, 1000};
-    es[4] = edge{1, 4, 500};
-    es[5] = edge{2, 3, 100};
-    es[6] = edge{2, 4, 10000};
-    es[7] = edge{3, 4, 5000};
-
-    // 最小全域木と最小全域木のコストを求める
-    auto [uf, cost] = kruskal(es, V, E);
-    cout << "MST Cost: " << cost << endl;
-}
 
 void test1() {
     cout << "===test1===" << endl;
@@ -244,6 +223,29 @@ void test1() {
     // false
     cout << uf.get_group_num() << endl;
     // 5
+}
+
+void test2() {
+    cout << "===test2===" << endl;
+    // クラスカル法のテストコード
+    long long V = 5;  // 頂点数
+    long long E = 8;  // 辺数
+    vector<edge> es(E);
+
+    // グラフを構築
+    es[0] = edge{0, 1, 10};
+    es[1] = edge{0, 3, 5};
+    es[2] = edge{1, 2, 1};
+    es[3] = edge{1, 3, 1000};
+    es[4] = edge{1, 4, 500};
+    es[5] = edge{2, 3, 100};
+    es[6] = edge{2, 4, 10000};
+    es[7] = edge{3, 4, 5000};
+
+    // 最小全域木と最小全域木のコストを求める
+    auto [uf, cost] = kruskal(es, V);
+    cout << "MST Cost: " << cost << endl;
+    // MST Cost: 516
 }
 
 int main() {
