@@ -1,6 +1,14 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+/**
+ * @brief Z-Algorithm
+ * 各iについて、S と S.substr(i)の共通接頭辞の長さを格納した配列Zを求める。
+ *
+ * @tparam T
+ * @param S 文字列S
+ * @return vector<T> 各iについて共通接頭辞の長さを格納した配列Zを返す。
+ */
 template <typename T>
 vector<T> z_algorithm(string S) {
     T n = S.size();
