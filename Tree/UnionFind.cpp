@@ -180,19 +180,18 @@ struct UnionFindVerSize {
  *  クラスカル法自体の計算量はO(|E| log|V|)
  *  ただし内部でUnionFindを実行している
  ***/
-struct edge {long long u, v, cost; };  // 頂点uと頂点vを結ぶ無向辺（コスト：cost）
-
-bool comp(const edge& e1, const edge& e2) {
+struct Edge {long long u, v, cost; };  // 頂点uと頂点vを結ぶ無向辺（コスト：cost）
+bool comp(const Edge& e1, const Edge& e2) {
     return e1.cost < e2.cost;
 }
 
-pair<UnionFindVerSize<long long>, long long> kruskal(vector<edge> es, long long V) {
-    sort(es.begin(), es.end(), comp);  // edge.costが小さい順にソートする
+pair<UnionFindVerSize<long long>, long long> kruskal(vector<Edge> es, long long V) {
+    sort(es.begin(), es.end(), comp);  // Edge.costが小さい順にソートする
     UnionFindVerSize uf = UnionFindVerSize<long long>(V);
 
     long long res = 0;  // 最小全域木のコスト
     for (long long i=0; i<(long long)es.size(); i++) {
-        edge e = es[i];
+        Edge e = es[i];
         if (!uf.is_same_group(e.u, e.v)) {
             uf.unite(e.u, e.v);
             res += e.cost;
@@ -230,17 +229,17 @@ void test2() {
     // クラスカル法のテストコード
     long long V = 5;  // 頂点数
     long long E = 8;  // 辺数
-    vector<edge> es(E);
+    vector<Edge> es(E);
 
     // グラフを構築
-    es[0] = edge{0, 1, 10};
-    es[1] = edge{0, 3, 5};
-    es[2] = edge{1, 2, 1};
-    es[3] = edge{1, 3, 1000};
-    es[4] = edge{1, 4, 500};
-    es[5] = edge{2, 3, 100};
-    es[6] = edge{2, 4, 10000};
-    es[7] = edge{3, 4, 5000};
+    es[0] = Edge{0, 1, 10};
+    es[1] = Edge{0, 3, 5};
+    es[2] = Edge{1, 2, 1};
+    es[3] = Edge{1, 3, 1000};
+    es[4] = Edge{1, 4, 500};
+    es[5] = Edge{2, 3, 100};
+    es[6] = Edge{2, 4, 10000};
+    es[7] = Edge{3, 4, 5000};
 
     // 最小全域木と最小全域木のコストを求める
     auto [uf, cost] = kruskal(es, V);
