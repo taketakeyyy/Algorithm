@@ -2,7 +2,35 @@
 using namespace std;
 
 
-// Trie木
+/**
+ * @brief Trie木
+ *
+ * @tparam T
+ *
+ * @usage
+ * // Trie木に文字列を追加
+ * trie.add("FIREMAN");
+ * trie.add("FIREARM");
+ * trie.add("FIREWORK");
+ *
+ * // Trie木に "FIRE" の文字列は存在するか？
+ * string s = "FIRE";
+ * cout << (trie.search(s) ? "Yes" : "No") << endl;
+ * // No
+ *
+ * // LCP（最長共通接頭辞）になら "FIRE" は存在する
+ * int len = trie.lcp_len(s);
+ * cout << s.substr(0,len) << endl;
+ * // FIRE
+ *
+ * // Trie木中の"FIREMAN"を除外した"FIREMAN"とのLCPは？
+ * string s2 = "FIREMAN";
+ * int len2 = trie.lcp_len_exclude(s2);
+ * cout << len2 << endl;
+ * cout << s2.substr(0,len2) << endl;
+ * // 4
+ * // FIRE
+ */
 template <typename T>
 class Trie {
     private:
