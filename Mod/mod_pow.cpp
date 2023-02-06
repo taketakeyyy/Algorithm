@@ -2,24 +2,20 @@
 using namespace std;
 
 
-/***
- * a^{n} mod m の計算を、繰り返し二乗法で求めるライブラリ
- ***/
-
+/**
+ * @brief a^{n} mod m の計算を、繰り返し二乗法で求める
+ * 計算量：O(log n)
+ **/
 template<typename T>
 T mod_pow(T a, T n, T m) {
-    /** a^{n} mod m の計算を、繰り返し二乗法で求める
-     *  計算量：O(log n)
-     **/
     if (n==0) return 1;
-    a %= m;
-    T res = mod_pow(a*a, n/2, m);
-    if (n&1) res = (res * a) % m;
+    T res = mod_pow(a*a%m, n/2, m);
+    if (n&1) res = res * a % m;
     return res;
 }
 
-
-void test() {
+void test1() {
+    cout << "===test1===" << endl;
     long long ans;
     long long a, n, m;
 
@@ -35,7 +31,7 @@ void test() {
 }
 
 
-int main(int argc, char const *argv[]){
-    test();
+int main(){
+    test1();
     return 0;
 }
