@@ -21,7 +21,7 @@ template <typename T>
 class BIT {
     private:
         /* 引数チェック */
-        void _check_args_add(T a) {
+        void _check_args_add(size_t a) {
             if (a <= 0 || this->N < a) {
                 try {
                     throw "Error BIT.add(a, w): Arg 'a' MUST '1 <= a <= N'.";
@@ -34,7 +34,7 @@ class BIT {
         }
 
         /* 引数チェック */
-        void _check_args_sum(T a) {
+        void _check_args_sum(size_t a) {
             if (a <= 0 || this->N < a) {
                 try {
                     throw "Error BIT.add(a, w): Arg 'a' MUST '1 <= a <= N'.";
@@ -47,36 +47,37 @@ class BIT {
         }
 
     public:
-        T N;  // 要素数
+        size_t N;  // 要素数
         vector<T> bit;  // bit配列
 
-        BIT(T n) {
+        BIT(size_t n) {
             this->N = n;
             this->bit.resize(n+1, 0);
         }
 
-
-        void add(T a, T w) {
-            /***v[a]番目に値wを加える
-            O(logN)
-            ***/
+        /**
+         * @brief v[a]番目に値wを加える
+         * @details O(logN)
+         */
+        void add(size_t a, T w) {
             // エラー処理
             _check_args_add(a);
 
-            T x = a;
+            size_t x = a;
             while (x <= this->N) {
                 this->bit[x] += w;
                 x += x&-x;
             }
         }
 
-        T sum(T a) {
-            /***vの区間[1,a]の和を求める
-            O(logN)
-            ***/
+        /**
+         * @brief vの区間[1,a]の和を求める
+         * @details O(logN)
+         */
+        T sum(size_t a) {
             _check_args_sum(a);
 
-            T ret = 0; T x = a;
+            T ret = 0; size_t x = a;
             while (x > 0) {
                 ret += this->bit[x];
                 x -= x&-x;
@@ -105,7 +106,7 @@ void test1() {
     }
 
     /* bitの中身を見る */
-    for (int i=0; i<bit.N+1; i++) {
+    for (int i=0; i<(int)bit.N+1; i++) {
         cout << bit.bit[i] << " ";
     }
     // 0 1 3 3 10 5 11 7 36 9 19 11 42 13 27 15 136 17 35 19 74 21 43 23 164 25 51 27 106 29 59 31 528 33 67 35 138 37 75 39 292 41 83 43 170 45 91 47 648 49 99 51 202 53 107 55 420 57 115 59 234 61 123 63 2080 65 131 67 266 69 139 71 548 73 147 75 298 77 155 79 1160 81 163 83 330 85 171 87 676 89 179 91 362 93 187 95 2576 97 195 99 394
@@ -130,7 +131,7 @@ void test_error() {
 }
 
 
-int main(int argc, char const *argv[]){
+int main() {
     test1();
 
     test_error();
