@@ -15,6 +15,9 @@ namespace MatrixLib {
     class inversion_error: public std::exception {
         virtual const char* what() const noexcept { return "Error: Impossible to calculate inversion!"; }
     };
+    class no_square_matrix_error: public std::exception {
+        virtual const char* what() const noexcept { return "Error: Impossible to calculate because of no-square matrix."; }
+    };
 
 
     /*** 二次元行列のライブラリMatrix ***/
@@ -31,10 +34,10 @@ namespace MatrixLib {
                 }
 
                 T res = 0;
-                for (int col2=0; col2<coA.size(); col2++) {
+                for (size_t col2=0; col2<coA.size(); col2++) {
                     vector<vector<T>> cocoA(coA.size()-1);
-                    for (int row=1; row<coA.size(); row++) {
-                        for (int col=0; col<coA.size(); col++) {
+                    for (size_t row=1; row<coA.size(); row++) {
+                        for (size_t col=0; col<coA.size(); col++) {
                             if (col2==col) continue;
                             cocoA[row-1].emplace_back(coA[row][col]);
                         }
@@ -236,6 +239,29 @@ namespace MatrixLib {
                 }
 
                 return invA;
+            }
+
+            /**
+             * @brief 自身の行列累乗を計算して返す
+             *
+             * @param n n乗する
+             * @return Matrix
+             */
+            Matrix pow(int n) const {
+                if (this->row != this->col) { throw no_square_matrix_error(); }
+                Matrix res = Matrix<T>(this->row, this->col);
+
+                for(size_t i=0; i<this->row; i++) {
+                    res[i][i] = 1;
+                }
+
+                Matrix a = (*this);
+                while (n > 0) {
+                    if (n&1) res = a.dot(res);
+                    a = a.dot(a);
+                    n /= 2;
+                }
+                return res;
             }
     };
 }
@@ -554,7 +580,22 @@ void test_inv() {
 //   -0.000000,  0.272727, -0.636364, -0.090909]]
 }
 
-int main(int argc, char const *argv[]){
+void test_pow() {
+    // 計算確認用サイト
+    // https://keisan.casio.jp/exec/system/1578283752
+    cout << "===test_pow===" << endl;
+    MatrixLib::Matrix<double> mat(2,2);
+    mat[0][0] = 2; mat[0][1] = 6;
+    mat[1][0] = 4; mat[1][1] = 3;
+    auto res = mat.pow(10);
+
+    res.print();
+// [[228617368.000000, 310020150.000000],
+//   206680100.000000, 280287393.000000]]
+}
+
+
+int main(){
     test();
     test2();
     test_det2();
@@ -563,5 +604,6 @@ int main(int argc, char const *argv[]){
     test_det5();
     test_dot();
     test_inv();
+    test_pow();
     return 0;
 }
