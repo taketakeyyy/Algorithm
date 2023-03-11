@@ -243,6 +243,7 @@ namespace MatrixLib {
 
             /**
              * @brief 自身の行列累乗を計算して返す
+             * 繰り返し二乗法を使って、O(log n)で計算する
              *
              * @param n n乗する
              * @return Matrix
