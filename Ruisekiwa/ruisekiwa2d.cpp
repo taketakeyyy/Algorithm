@@ -1,83 +1,77 @@
 #include <bits/stdc++.h>
 using namespace std;
+using ll = long long;
 
-// 5x10の配列a
-const vector<vector<int>> a = {
-{1, 0, 1, 0, 1, 0, 1, 0, 1, 0},
-{2, 0, 2, 0, 2, 0, 2, 0, 2, 0},
-{3, 0, 3, 0, 3, 0, 3, 0, 3, 0},
-{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
-{1, 1, 2, 1, 1, 2, 1, 1, 2, 0},
+/**
+ * @brief 二次元累積和
+ * @example
+ * vector<vector<ll>> A // 二次元配列のデータ
+ * Ruiseki2D R(A);
+ * ll res = R.query({y1,x1},{y2,x2}) // [(y1,x1), (y2,x2)] の長方形の区間和を返す
+ */
+class Ruiseki2D {
+private:
+    vector<vector<ll>> mR; // 累積和
+
+public:
+    Ruiseki2D(const vector<vector<ll>> &A) {
+        ll H = A.size();
+        ll W = A[0].size();
+        mR = A;
+        // 横方向に累積和
+        for(ll i=0; i<H; i++) {
+            for(ll j=1; j<W; j++) mR[i][j] += mR[i][j-1];
+        }
+        // 縦方向に累積和
+        for(ll j=0; j<W; j++) {
+            for(ll i=1; i<H; i++) mR[i][j] += mR[i-1][j];
+        }
+    }
+
+    // [(y1,x1), (y2,x2)] の長方形の区間和を返す
+    ll query(const pair<ll,ll> &p1, const pair<ll,ll> &p2) {
+        ll y1 = p1.first; ll x1 = p1.second;
+        ll y2 = p2.first; ll x2 = p2.second;
+        if (x1-1<0 and y1-1<0) return mR[y2][x2];
+        else if (x1-1<0) return mR[y2][x2] - mR[y1-1][x2];
+        else if (y1-1<0) return mR[y2][x2] - mR[y2][x1-1];
+        return mR[y2][x2] - mR[y2][x1-1] - mR[y1-1][x2] + mR[y1-1][x1-1];
+    }
 };
 
 
-void test(){
-    int H = (int)a.size();
-    int W = (int)a[0].size();
-    vector<vector<int>> S(H+1, vector<int>(W+1, 0));
+void test1(){
+    // 5x10の配列a
+    const vector<vector<ll>> A = {
+        {1, 0, 1,},
+        {2, 0, 2, },
+        {3, 0, 3, },
+        {-1,-1,-1,},
+    };
+    ll H = A.size();
+    ll W = A[0].size();
 
-    /* Sの作成（前処理） */
-    for (int h=1; h<H+1; h++) {
-        for (int w=1; w<W+1; w++) {
-            S[h][w] = a[h-1][w-1] + S[h][w-1] + S[h-1][w] - S[h-1][w-1];
-        }
+    // 二次元累積和作成
+    Ruiseki2D R(A);
+
+    {// 座標(0,0) ~ 座標(H-1,W-1)の区間和を求める
+        ll res = R.query({0,0}, {H-1,W-1});
+        cout << res << endl; // 9
     }
 
-    /* Sを出力 */
-    for (int h=0; h<S.size(); h++) {
-        for (int w=0; w<S[0].size(); w++) {
-            printf("%2d ", S[h][w]);
-        }
-        cout << endl;
+    {// 座標(0,0) ~ 座標(0,0)の区間和を求める
+        ll res = R.query({0,0}, {0,0});
+        cout << res << endl; // 1
     }
-    /* Sの中身
-     0  0  0  0  0  0  0  0  0  0  0
-     0  1  1  2  2  3  3  4  4  5  5
-     0  3  3  6  6  9  9 12 12 15 15
-     0  6  6 12 12 18 18 24 24 30 30
-     0  5  4  9  8 13 12 17 16 21 20
-     0  6  6 13 13 19 20 26 26 33 32
-    */
-    cout << "===" << endl;
 
-    /* クエリ処理
-     * [h1,h2)x[w1,w2)の範囲の区間和を求める
-     */
-    int h1, h2, w1, w2;
-    h1=1; h2=5; w1=4; w2=7;
-    /*
-     * a[5][10] = {
-     * {1, 0, 1, 0,   1, 0, 1, 0, 1, 0},
-     *              +---------+
-     * {2, 0, 2, 0, | 2, 0, 2,| 0, 2, 0},
-     * {3, 0, 3, 0, | 3, 0, 3,| 0, 3, 0},
-     * {-1,-1,-1,-1,|-1,-1,-1,|-1,-1,-1},
-     * {1, 1, 2, 1, |1, 2, 1, | 1, 2, 0},
-     *              +---------+
-     * };
-     */
-    cout << S[h2][w2] - S[h1][w2] - S[h2][w1] + S[h1][w1] << endl;
-    // 11
-    cout << "---" << endl;
-
-    h1=0; h2=1; w1=0; w2=1;
-    /*
-     * a[5][10] = {
-     *  +--+
-     * {|1 |, 0, 1, 0,  1, 0, 1, 0, 1, 0},
-     *  +--+
-     * {2, 0, 2, 0,  2, 0, 2, 0, 2, 0},
-     * {3, 0, 3, 0,  3, 0, 3, 0, 3, 0},
-     * {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
-     * {1, 1, 2, 1,  1, 2, 1,  1, 2, 0},
-     * };
-     */
-    cout << S[h2][w2] - S[h1][w2] - S[h2][w1] + S[h1][w1] << endl;
-    // 1
+    {// 座標(1,2) ~ 座標(2,2)の区間和を求める
+        ll res = R.query({1,2}, {2,2});
+        cout << res << endl; // 5
+    }
 }
 
 
 int main(int argc, char const *argv[]){
-    test();
+    test1();
     return 0;
 }
