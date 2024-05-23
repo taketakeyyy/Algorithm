@@ -29,6 +29,12 @@ struct frac {
         bool operator<=(const frac &other) const {
             return this->a*other.b <= other.a*this->b;
         }
+        bool operator>(const frac &other) const {
+            return this->a*other.b > other.a*this->b;
+        }
+        bool operator>=(const frac &other) const {
+            return this->a*other.b >= other.a*this->b;
+        }
         bool operator==(const frac &other) const {
             return (this->a == other.a) && (this->b == other.b);
         }
