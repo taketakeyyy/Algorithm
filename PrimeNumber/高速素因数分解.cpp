@@ -67,7 +67,7 @@ public:
      */
     map<ll,ll> query(ll x) {
         map<ll,ll> res; // key:素因数, val:素因数の個数
-        while(true) {
+        while(x != 1LL) {
             ll d = m_divided[x];
             if (d==-1) {
                 res[x]++;
@@ -122,6 +122,18 @@ void test1() {
         // prime factor of 1000000
         // 2: 6
         // 5: 6
+    }
+
+    {// 1を素因数分解
+        ll X = 1;
+        cout << "prime factor of " << X << endl;
+        map<ll,ll> pf = hspf.query(X);
+        for(auto[key, val]: pf) {
+            cout << key << ": " << val << endl;
+        }
+        cout << endl;
+        // prime factor of 1
+        // (何も表示されない)
     }
 }
 
