@@ -16,18 +16,18 @@ using namespace std;
  * Usage
  *   long long N = 4;
  *   long long M = 7;  // 辺数（使ってない）
- *   vector<set<long long>> graph(N);
- *   graph[0].insert(1);
- *   graph[1].insert(0);
- *   graph[1].insert(2);
- *   graph[3].insert(2);
- *   graph[3].insert(0);
- *   graph[0].insert(3);
- *   graph[1].insert(2);
+ *   vector<vector<long long>> G(N);
+ *   G[0].push_back(1);
+ *   G[1].push_back(0);
+ *   G[1].push_back(2);
+ *   G[3].push_back(2);
+ *   G[3].push_back(0);
+ *   G[0].push_back(3);
+ *   G[1].push_back(2);
  *
  *   // SCC実行
- *   SCC scc = SCC<long long>(N, graph);
- *   set<set<long long>> scc_groups = scc.scc_groups();
+ *   SCC scc = SCC<long long>(N, G);
+ *   auto scc_groups = scc.scc_groups();
  *
  *   // SCCを見る
  *   scc.print_scc_groups(scc_groups);
@@ -38,31 +38,31 @@ template<typename T>
 class SCC {
     private:
         T N;  // 頂点数
-        vector<set<T>> graph;  // graph[u] := 頂点uに隣接している頂点vの集合（uからvへの有向辺）
-        vector<set<T>> rev_graph;  // graphの有向辺を反転させたグラフrev_graph
+        vector<vector<T>> G;  // G[u] := 頂点uに隣接している頂点vのリスト（uからvへの有向辺）
+        vector<vector<T>> invG;  // Gの有向辺を反転させたグラフ
         vector<T> id2sccid;  // 強連結成分（SCC）用に記録する番号(頂点番号→SCCID)
         vector<T> sccid2id;  // SCCIDから頂点番号を割り出すテーブル（SCCID→頂点番号）
 
         /**
          * @brief
-         * graphの有向辺を反転させたグラフrev_graphを確定させる。
+         * Gの有向辺を反転させたグラフinvGを確定させる。
          * O(頂点数+辺数)。
          */
-        void fix_rev_graph() {
-            this->rev_graph.assign(this->N, set<T>());
+        void fix_invG() {
+            this->invG.assign(this->N, vector<T>());
             for(T u=0; u<this->N; u++) {
-                for(auto v: graph[u]) {
-                    this->rev_graph[v].insert(u);
+                for(auto v: this->G[u]) {
+                    this->invG[v].push_back(u);
                 }
             }
         }
 
-        void dfs_step1(T u, T &sccid, set<T> &visited) {
-            if (visited.count(u)) return;
+        void dfs_step1(T u, T &sccid, vector<bool> &visited) {
             if (id2sccid[u]!=-1) return;
-            visited.insert(u);
+            if (visited[u]) return;
+            visited[u] = true;
 
-            for(auto v: this->graph[u]) {
+            for(auto v: this->G[u]) {
                 dfs_step1(v, sccid, visited);
             }
 
@@ -71,22 +71,21 @@ class SCC {
             sccid++;
         }
 
-        void dfs_step2(T u, set<T> &visited, vector<bool> &step2_done) {
-            if (visited.count(u)) return;
+        void dfs_step2(T u, vector<T> &group, vector<bool> &step2_done) {
             if (step2_done[id2sccid[u]]) return;
-            visited.insert(u);
+            group.push_back(u);
             step2_done[id2sccid[u]] = true;
 
-            for(auto v: this->rev_graph[u]) {
-                dfs_step2(v, visited, step2_done);
+            for(auto v: this->invG[u]) {
+                dfs_step2(v, group, step2_done);
             }
         }
 
 
     public:
-        SCC(T N, vector<set<T>> graph) {
-            this->N = N;
-            this->graph = graph;
+        SCC(T _N, vector<vector<T>> _G) {
+            this->N = _N;
+            this->G = _G;
             this->id2sccid.assign(N, -1);
             this->sccid2id.assign(N, -1);
         }
@@ -94,28 +93,30 @@ class SCC {
         /**
          * @brief SCCを実行。
          * 計算量O(頂点数+辺数)。
-         * @return set<set<T>> 強連結成分のグループ
+         * @return vector<vector<T>> 強連結成分のグループ
          */
-        set<set<T>> scc_groups() {
+        vector<vector<T>> scc_groups() {
             // [ステップ1]
             // DFSの帰りがけ順に番号を振る
-            T sccid = 0; // SCCでつける番号
-            for(int u=0; u<N; u++) {
-                set<T> visited;
-                this->dfs_step1(u, sccid, visited);
+            {
+                T sccid = 0; // SCCでつける番号
+                vector<bool> visited(this->N, false);
+                for(int u=0; u<N; u++) {
+                    this->dfs_step1(u, sccid, visited);
+                }
             }
 
             // [ステップ2]
             // 辺の向きをすべて反転させ、番号の大きい順からDFSする
             // （実装のコツ）SCC用の番号i=N-1から順に、「反転させた有向辺が張っているならグループ化」をDFSでやっていく
-            this->fix_rev_graph();
+            this->fix_invG();
             vector<bool> step2_done(this->N, false);  // ステップ2で終了したSCCIDを記録する
-            set<set<T>> scc_groups;  // 強連結成分のグループ
+            vector<vector<T>> scc_groups;  // 強連結成分のグループ
             for(int i=N-1; i>=0; i--) {
                 if (step2_done[i]) continue;
-                set<T> visited;
-                dfs_step2(sccid2id[i], visited, step2_done);
-                scc_groups.insert(visited);
+                vector<T> group;
+                dfs_step2(sccid2id[i], group, step2_done);
+                scc_groups.push_back(group);
             }
 
             return scc_groups;
@@ -126,7 +127,7 @@ class SCC {
          * @param scc_groups
          * @param idx_plus 頂点番号に足す数。デフォルト0。
          */
-        void print_scc_groups(set<set<T>> &scc_groups, T idx_plus=0) {
+        void print_scc_groups(vector<vector<T>> &scc_groups, T idx_plus=0) {
             auto itr = scc_groups.begin();
             for(size_t i=0; i<scc_groups.size(); i++) {
                 cout << "group" << i << " (size: " << (*itr).size() << "): ";
@@ -153,18 +154,18 @@ void test1() {
     cout << "===test1===" << endl;
     long long N = 4;
     long long M = 7;  // 辺数（使ってない）
-    vector<set<long long>> graph(N);
-    graph[0].insert(1);
-    graph[1].insert(0);
-    graph[1].insert(2);
-    graph[3].insert(2);
-    graph[3].insert(0);
-    graph[0].insert(3);
-    graph[1].insert(2);
+    vector<vector<long long>> G(N);
+    G[0].push_back(1);
+    G[1].push_back(0);
+    G[1].push_back(2);
+    G[3].push_back(2);
+    G[3].push_back(0);
+    G[0].push_back(3);
+    G[1].push_back(2);
 
     // SCC実行
-    SCC scc = SCC<long long>(N, graph);
-    set<set<long long>> scc_groups = scc.scc_groups();
+    SCC scc = SCC<long long>(N, G);
+    auto scc_groups = scc.scc_groups();
 
     // SCCを見る
     scc.print_scc_groups(scc_groups);
@@ -177,26 +178,26 @@ void test2() {
      ***/
     cout << "===test2===" << endl;
     long long N = 7;
-    vector<set<long long>> graph(N);
-    graph[0].insert(1);
-    graph[1].insert(2);
-    graph[2].insert(0);
-    graph[2].insert(3);
-    graph[3].insert(4);
-    graph[4].insert(3);
-    graph[4].insert(5);
-    graph[4].insert(6);
+    vector<vector<long long>> G(N);
+    G[0].push_back(1);
+    G[1].push_back(2);
+    G[2].push_back(0);
+    G[2].push_back(3);
+    G[3].push_back(4);
+    G[4].push_back(3);
+    G[4].push_back(5);
+    G[4].push_back(6);
 
     // SCC実行
-    SCC scc = SCC<long long>(N, graph);
-    set<set<long long>> scc_groups = scc.scc_groups();
+    SCC scc = SCC<long long>(N, G);
+    auto scc_groups = scc.scc_groups();
 
     // SCCを見る
     scc.print_scc_groups(scc_groups);
-    // group0 (size: 3): 0 1 2
+    // group0 (size: 3): 0 2 1
     // group1 (size: 2): 3 4
-    // group2 (size: 1): 5
-    // group3 (size: 1): 6
+    // group2 (size: 1): 6
+    // group3 (size: 1): 5
 }
 
 void test3() {
@@ -205,28 +206,28 @@ void test3() {
     cout << "===test3===" << endl;
 
     long long N = 9;
-    vector<set<long long>> graph(N);
-    graph[0].insert(1);
-    graph[1].insert(6);
-    graph[2].insert(7);
-    graph[3].insert(1);
-    graph[3].insert(5);
-    graph[4].insert(3);
-    graph[5].insert(8);
-    graph[5].insert(7);
-    graph[6].insert(0);
-    graph[7].insert(2);
-    graph[8].insert(4);
+    vector<vector<long long>> G(N);
+    G[0].push_back(1);
+    G[1].push_back(6);
+    G[2].push_back(7);
+    G[3].push_back(1);
+    G[3].push_back(5);
+    G[4].push_back(3);
+    G[5].push_back(8);
+    G[5].push_back(7);
+    G[6].push_back(0);
+    G[7].push_back(2);
+    G[8].push_back(4);
 
     // SCC実行
-    SCC scc = SCC<long long>(N, graph);
-    set<set<long long>> scc_groups = scc.scc_groups();
+    SCC scc = SCC<long long>(N, G);
+    auto scc_groups = scc.scc_groups();
 
     // SCCを見る
     scc.print_scc_groups(scc_groups, 1);
-    // group0 (size: 3): 1 2 7
+    // group0 (size: 4): 4 5 9 6
     // group1 (size: 2): 3 8
-    // group2 (size: 4): 4 5 6 9
+    // group2 (size: 3): 1 7 2
 }
 
 
