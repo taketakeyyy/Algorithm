@@ -7,6 +7,7 @@ using namespace std;
  * 有向グラフに対して「お互いに行き来できる頂点を同じグループにする」ことを強連結分解（SCC）という。
  *
  * サイクルをグループ分けするイメージ。
+ * SCC構築の計算量：O(V+E)
  *
  * @tparam T int, long long
  *
@@ -83,6 +84,7 @@ class SCC {
 
 
     public:
+        vector<T> id2groupid; // 頂点番号→groupid
         SCC(T _N, vector<vector<T>> _G) {
             this->N = _N;
             this->G = _G;
@@ -119,6 +121,14 @@ class SCC {
                 scc_groups.push_back(group);
             }
 
+            // id2groupid作成
+            id2groupid.assign(N, 0);
+            for(T groupid=0; groupid<(T)scc_groups.size(); groupid++) {
+                for(T u: scc_groups[groupid]) {
+                    id2groupid[u] = groupid;
+                }
+            }
+
             return scc_groups;
         }
 
@@ -130,13 +140,94 @@ class SCC {
         void print_scc_groups(vector<vector<T>> &scc_groups, T idx_plus=0) {
             auto itr = scc_groups.begin();
             for(size_t i=0; i<scc_groups.size(); i++) {
-                cout << "group" << i << " (size: " << (*itr).size() << "): ";
+                cout << "groupid" << i << " (size: " << (*itr).size() << "): ";
                 for(auto u: *itr) {
                     cout << u+idx_plus << " ";
                 }
                 cout << endl;
                 itr++;
             }
+        }
+
+        /**
+         * @brief 強連結成分分解後のDAGの根を見つける
+         * 根は複数ある場合がある
+         * @return vector<T> 根のgroupidのリスト
+         */
+        vector<T> find_roots(const vector<vector<T>> &scc_groups) {
+            // SCC後のDAGの根の判定は、グループ外からグループ内に有向辺が存在しないなら根
+            vector<T> roots; // 根のgroupidを格納
+            for(T groupid=0; groupid<(T)scc_groups.size(); groupid++) {
+                const auto &group = scc_groups[groupid];
+                bool is_root = true;
+                for(T u: group) {
+                    for(T v: this->invG[u]) {
+                        if (!count(group.begin(), group.end(), v)) { is_root=false; break; } // vectorのcountなので重いかも
+                    }
+                    if (!is_root) { break; }
+                }
+                if (is_root) { roots.push_back(groupid); }
+            }
+            return roots;
+        }
+
+        /**
+         * @brief 強連結成分分解後のDAGの葉を見つける
+         *
+         * @return vector<T> 葉のgroupidリスト
+         */
+        vector<T> find_leaves(const vector<vector<T>> &scc_groups) {
+            // SCC後のDAGの葉の判定は、グループ内からグループ外に有向辺が存在しないなら葉
+            vector<T> leaves;  // 葉のgroupid番号を格納
+            for(T groupid=0; groupid<(T)scc_groups.size(); groupid++) {
+                const auto &group = scc_groups[groupid];
+                bool is_leaf = true;
+                for(T u: group) {
+                    for(T v: this->G[u]) {
+                        if (!count(group.begin(), group.end(), v)) { is_leaf = false; break; } // vectorのcountなので重いかも
+                    }
+                    if (!is_leaf) { break; }
+                }
+                if (is_leaf) { leaves.push_back(groupid); }
+            }
+            return leaves;
+        }
+
+        /**
+         * @brief SCC後のDAGを作る
+         * 計算量O(V+E)
+         * @param scc_groups
+         * @return vector<vector<T>>
+         */
+        vector<vector<T>> makeDAG(const vector<vector<T>> &scc_groups) {
+            T GN = scc_groups.size();
+            vector<set<T>> dagset(GN); // 辺に重複がないようにsetで持つ
+            for(T u=0; u<this->N; u++) {
+                for(T v: this->G[u]) {
+                    if (id2groupid[u] != id2groupid[v]) {
+                        // 異なるグループへの辺を貼る
+                        dagset[id2groupid[u]].insert(id2groupid[v]);
+                    }
+                }
+            }
+
+            // vectorに直す
+            vector<vector<T>> dag(GN);
+            for(T groupid=0; groupid<GN; groupid++) {
+                dag[groupid] = vector<T>(dagset[groupid].begin(), dagset[groupid].end());
+            }
+
+            return dag;
+        }
+
+        /**
+         * @brief 頂点uがどのSCCのグループに属しているかを返す
+         *
+         * @param u
+         * @return T
+         */
+        T get_groupid(T u) {
+            return id2groupid[u];
         }
 };
 
@@ -171,6 +262,18 @@ void test1() {
     scc.print_scc_groups(scc_groups);
     // group0 (size: 3): 0 1 3
     // group1 (size: 1): 2
+
+    // DAGの根は？
+    auto roots = scc.find_roots(scc_groups);
+    cout << "roots(groupid): ";
+    for(auto u : roots) cout << u << " ";
+    cout << endl;
+
+    // DAGの葉は？
+    auto leaves = scc.find_leaves(scc_groups);
+    cout << "leaves(groupid): ";
+    for(auto u : leaves) cout << u << " ";
+    cout << endl;
 }
 
 void test2() {
@@ -198,6 +301,19 @@ void test2() {
     // group1 (size: 2): 3 4
     // group2 (size: 1): 6
     // group3 (size: 1): 5
+
+    // DAGの根は？
+    auto roots = scc.find_roots(scc_groups);
+    cout << "roots(groupid): ";
+    for(auto u : roots) cout << u << " ";
+    cout << endl;
+
+    // DAGの葉は？
+    auto leaves = scc.find_leaves(scc_groups);
+    cout << "leaves(groupid): ";
+    for(auto u : leaves) cout << u << " ";
+    cout << endl;
+
 }
 
 void test3() {
@@ -228,6 +344,18 @@ void test3() {
     // group0 (size: 4): 4 5 9 6
     // group1 (size: 2): 3 8
     // group2 (size: 3): 1 7 2
+
+    // DAGの根は？
+    auto roots = scc.find_roots(scc_groups);
+    cout << "roots(groupid): ";
+    for(auto u : roots) cout << u << " ";
+    cout << endl;
+
+    // DAGの葉は？
+    auto leaves = scc.find_leaves(scc_groups);
+    cout << "leaves(groupid): ";
+    for(auto u : leaves) cout << u << " ";
+    cout << endl;
 }
 
 
