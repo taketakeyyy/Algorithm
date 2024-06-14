@@ -27,7 +27,7 @@ using namespace std;
  *   G[1].push_back(2);
  *
  *   // SCC実行
- *   SCC scc = SCC<long long>(N, G);
+ *   SCC scc = SCC<long long>(G);
  *
  *   // SCCを見る
  *   scc.print_groups();
@@ -91,9 +91,8 @@ class SCC {
          * 計算量O(頂点数+辺数)。
          * @return vector<vector<T>> 強連結成分のグループ
          */
-        SCC(T _N, vector<vector<T>> _G) {
-            this->N = _N;
-            this->G = _G;
+        SCC(vector<vector<T>> _G): G(_G) {
+            this->N = this->G.size();
             this->id2sccid.assign(N, -1);
             this->sccid2id.assign(N, -1);
 
@@ -192,28 +191,54 @@ class SCC {
 
         /**
          * @brief SCC後のDAGを作る
-         * 計算量O(V+E)
+         * 計算量 O(V+E)
          * @return vector<vector<T>>
          */
         vector<vector<T>> makeDAG() {
             T GN = groups.size();
-            vector<set<T>> dagset(GN); // 辺に重複がないようにsetで持つ
+            vector<set<T>> DAGset(GN); // 辺に重複がないようにsetで持つ
             for(T u=0; u<this->N; u++) {
                 for(T v: this->G[u]) {
                     if (id2groupid[u] != id2groupid[v]) {
-                        // 異なるグループへの辺を貼る
-                        dagset[id2groupid[u]].insert(id2groupid[v]);
+                        // 異なるグループへの辺を張る
+                        DAGset[id2groupid[u]].insert(id2groupid[v]);
                     }
                 }
             }
 
             // vectorに直す
-            vector<vector<T>> dag(GN);
+            vector<vector<T>> DAG(GN);
             for(T groupid=0; groupid<GN; groupid++) {
-                dag[groupid] = vector<T>(dagset[groupid].begin(), dagset[groupid].end());
+                DAG[groupid] = vector<T>(DAGset[groupid].begin(), DAGset[groupid].end());
             }
 
-            return dag;
+            return DAG;
+        }
+
+        /**
+         * @brief SCC後のDAGの辺を反転したグラフを返す
+         * 計算量 O(V+E)
+         * @return vector<vector<T>>
+         */
+        vector<vector<T>> makeInvDAG() {
+            T GN = groups.size();
+            vector<set<T>> invDAGset(GN); // 辺に重複がないようにsetで持つ
+            for(T u=0; u<this->N; u++) {
+                for(T v: this->invG[u]) {
+                    if (id2groupid[u] != id2groupid[v]) {
+                        // 異なるグループへの辺を張る
+                        invDAGset[id2groupid[u]].insert(id2groupid[v]);
+                    }
+                }
+            }
+
+            // vectorに直す
+            vector<vector<T>> invDAG(GN);
+            for(T groupid=0; groupid<GN; groupid++) {
+                invDAG[groupid] = vector<T>(invDAGset[groupid].begin(), invDAGset[groupid].end());
+            }
+
+            return invDAG;
         }
 
         /**
@@ -252,7 +277,7 @@ void test1() {
     G[1].push_back(2);
 
     // SCC実行
-    SCC scc = SCC<long long>(N, G);
+    SCC scc = SCC<long long>(G);
 
     // SCCを見る
     scc.print_groups();
@@ -290,7 +315,7 @@ void test2() {
     G[4].push_back(6);
 
     // SCC実行
-    SCC scc = SCC<long long>(N, G);
+    SCC scc = SCC<long long>(G);
 
     // SCCを見る
     scc.print_groups();
@@ -334,7 +359,7 @@ void test3() {
     G[8].push_back(4);
 
     // SCC実行
-    SCC scc = SCC<long long>(N, G);
+    SCC scc = SCC<long long>(G);
 
     // SCCを見る
     scc.print_groups(1);
