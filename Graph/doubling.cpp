@@ -27,7 +27,7 @@ void chmin(int& x, int y) { x = min(x,y); }
  *
  *  // ダブリングを使ってK回の遷移先を求める
  *  ll now = 0;  // 開始の頂点番号
- *  for(ll d=D-1; d>=0; k--) {
+ *  for(ll d=D-1; d>=0; d--) {
  *      if ((K>>d)&1) {
  *          now = doubling[d][now];
  *      }
