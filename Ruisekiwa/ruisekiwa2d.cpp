@@ -6,15 +6,27 @@ using ll = long long;
  * @brief 二次元累積和
  * @example
  * vector<vector<ll>> A // 二次元配列のデータ
- * Ruiseki2D R(A);
+ * Ruisekiwa2D R(A);
  * ll res = R.query({y1,x1},{y2,x2}) // [(y1,x1), (y2,x2)] の長方形の区間和を返す
  */
-class Ruiseki2D {
+class Ruisekiwa2D {
 private:
     vector<vector<ll>> mR; // 累積和
 
 public:
-    Ruiseki2D(const vector<vector<ll>> &A) {
+    // デフォルトコンストラクタ
+    Ruisekiwa2D() : mR(vector<vector<ll>>()) {}
+    // コピーコンストラクタ
+    Ruisekiwa2D(const Ruisekiwa2D &rhs) : mR(rhs.mR) {}
+    // コピー代入演算子
+    Ruisekiwa2D& operator=(const Ruisekiwa2D &rhs) {
+        if (this != &rhs) {  // 自己代入でないことを確認
+            mR = rhs.mR;
+        }
+        return *this;
+    }
+    // コンストラクタ
+    Ruisekiwa2D(const vector<vector<ll>> &A) {
         ll H = A.size();
         ll W = A[0].size();
         mR = A;
@@ -52,7 +64,7 @@ void test1(){
     ll W = A[0].size();
 
     // 二次元累積和作成
-    Ruiseki2D R(A);
+    Ruisekiwa2D R(A);
 
     {// 座標(0,0) ~ 座標(H-1,W-1)の区間和を求める
         ll res = R.query({0,0}, {H-1,W-1});
