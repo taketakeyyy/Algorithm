@@ -39,8 +39,7 @@ class WarshallFloyd {
              *   cost(long long): コストをcostに更新する
              **/
             // 二重辺に注意
-            if (this->dist[u][v] == 0) this->dist[u][v] = cost;
-            else this->dist[u][v] = min(this->dist[u][v], cost);
+            this->dist[u][v] = min(this->dist[u][v], cost);
         }
 
         vector<vector<long long>> shortest_path() {
