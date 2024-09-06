@@ -39,7 +39,7 @@ void chmin(int& x, int y) { x = min(x,y); }
 class LIS {
     private:
         vector<ll> dp1u;// dp1u[i] := dp1[i]を最後に更新したインデックス番号
-        vector<ll> pre; // pre[i] := LISを後ろから辿りたい。インデックス番号iの要素は、どのインデックス番号の要素へ辿ればいいか
+        vector<ll> prev; // prev[i] := LISを後ろから辿りたい。インデックス番号iの要素は、どのインデックス番号の要素へ辿ればいいか
     public:
         ll length;  // LISの長さ
         vector<ll> dp1; // dp1[i] := 長さがi+1であるような、増加部分列における最終要素の最小値
@@ -50,14 +50,14 @@ class LIS {
             dp1.assign(N, INF);
             dp1u.assign(N, -1);
             dp2.assign(N, 0);
-            pre.assign(N, -1);
+            prev.assign(N, -1);
 
             for(ll i=0; i<N; i++) {
                 ll idx = lower_bound(dp1.begin(), dp1.end(), A.at(i)) - dp1.begin();
                 dp1[idx] = A.at(i);
                 dp1u[idx] = i;
                 if (idx-1 >= 0) {
-                    pre[i] = dp1u[idx-1];
+                    prev[i] = dp1u[idx-1];
                 }
                 dp2[i] = idx+1;
             }
@@ -74,8 +74,8 @@ class LIS {
             vector<ll> res;
             ll u = this->dp1u[this->length-1];
             res.push_back(u);
-            while(this->pre[u] != -1) {
-                u = this->pre[u];
+            while(this->prev[u] != -1) {
+                u = this->prev[u];
                 res.push_back(u);
             }
             reverse(res.begin(), res.end());
