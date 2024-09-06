@@ -26,7 +26,7 @@ void chmin(int& x, int y) { x = min(x,y); }
  *
  *   // LIS作成
  *   LIS lis = LIS(A);
- *   cout << lis.length << endl;
+ *   cout << lis.answer << endl;
  *   // 3
  *
  *   // LISの経路を求めて表示
@@ -41,7 +41,7 @@ class LIS {
         vector<ll> dp1u;// dp1u[i] := dp1[i]を最後に更新したインデックス番号
         vector<ll> prev; // prev[i] := LISを後ろから辿りたい。インデックス番号iの要素は、どのインデックス番号の要素へ辿ればいいか
     public:
-        ll length;  // LISの長さ
+        ll answer;  // LISの長さ
         vector<ll> dp1; // dp1[i] := 長さがi+1であるような、増加部分列における最終要素の最小値
         vector<ll> dp2; // dp2[i] := 最後がA[i]であるような、最長な増加部分列の長さ
 
@@ -62,7 +62,7 @@ class LIS {
                 dp2[i] = idx+1;
             }
 
-            length = lower_bound(dp1.begin(), dp1.end(), INF) - dp1.begin();
+            answer = lower_bound(dp1.begin(), dp1.end(), INF) - dp1.begin();
         }
 
         /**
@@ -72,7 +72,7 @@ class LIS {
          */
         vector<ll> make_route() {
             vector<ll> res;
-            ll u = this->dp1u[this->length-1];
+            ll u = this->dp1u[this->answer-1];
             res.push_back(u);
             while(this->prev[u] != -1) {
                 u = this->prev[u];
@@ -92,8 +92,8 @@ void test1() {
 
     // LIS作成
     LIS lis = LIS(A);
-    cout << "length: " << lis.length << endl;
-    // length: 3
+    cout << "answer: " << lis.answer << endl;
+    // answer: 3
 
     // LISの経路を求めて表示
     auto route = lis.make_route();
@@ -110,8 +110,8 @@ void test2() {
 
     // LIS作成
     LIS lis = LIS(A);
-    cout << "length: " << lis.length << endl;
-    // length: 1
+    cout << "answer: " << lis.answer << endl;
+    // answer: 1
 
     // LISの経路を求めて表示
     auto route = lis.make_route();
@@ -128,8 +128,8 @@ void test3() {
 
     // LIS作成
     LIS lis = LIS(A);
-    cout << "length: " << lis.length << endl;
-    // length: 3
+    cout << "answer: " << lis.answer << endl;
+    // answer: 3
 
     // LISの経路を求めて表示
     auto route = lis.make_route();
