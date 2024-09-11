@@ -33,7 +33,7 @@ private:
 public:
     T mN, mD;
     vector<T> mG;
-    vector<vector<T>> m_doubling; // m_doubling[u][d] := 頂点uから2^d辿った先の頂点
+    vector<vector<T>> m_doubling; // m_doubling[d][u] := 頂点uから2^d辿った先の頂点
 
     /**
      * @brief コンストラクタ
@@ -43,14 +43,14 @@ public:
      * @param D 2^Dまで辿る
      * @param G G[u] := 頂点uの遷移先。Functional Graphであること
      */
-    Doubling(T N, T D, const vector<T> &G): mN(N), mD(D), mG(G), m_doubling(mN, vector<T>(mD, -1)) {
+    Doubling(T N, T D, const vector<T> &G): mN(N), mD(D), mG(G), m_doubling(mD, vector<T>(mN, -1)) {
         // ダブリングのグラフ構築
         for(ll i=0; i<N; i++) {
-            m_doubling[i][0] = mG[i];
+            m_doubling[0][i] = mG[i];
         }
         for(ll d=1; d<D; d++) {
             for(ll i=0; i<N; i++) {
-                m_doubling[i][d] = m_doubling[m_doubling[i][d-1]][d-1]; // 2^{d}辿った先は、「2^{d-1}辿った先」を2回辿ればよい
+                m_doubling[d][i] = m_doubling[d-1][m_doubling[d-1][i]]; // 2^{d}辿った先は、「2^{d-1}辿った先」を2回辿ればよい
             }
         }
     }
@@ -66,7 +66,7 @@ public:
     T query(T u, T k) {
         ll now = u;
         for(ll d=mD-1; d>=0; d--) {
-            if ((k>>d)&1) now = m_doubling[now][d];
+            if ((k>>d)&1) now = m_doubling[d][now];
         }
         return now;
     }
