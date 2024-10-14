@@ -4,6 +4,16 @@ using namespace std;
 
 /**
  * @brief ワ―シャルフロイド法
+ * @example
+ * // 頂点3のワ―シャルフロイド作成
+ * WarshallFloyd wf(3);
+ * // 辺を追加
+ * wf.add_edge(0, 1, 5);
+ * wf.add_edge(1, 2, 3);
+ * // 最短経路を計算して隣接行列を作成
+ * wf.build();
+ * // 隣接行列作成後に、辺を更に追加
+ * wf.add_edge_after_build(0, 2, 2);  // 0 -> 2 に新しいエッジ(コスト2)を追加
  */
 class WarshallFloyd {
 private:
