@@ -2,6 +2,17 @@
 
 /**
  * @brief 3次元ベクトル
+ * @example
+ * // ベクトルv(1,2,0)を作成
+ * Vector3D<ll> v(1,2,0);
+ *
+ * // 点A,BからベクトルABを作成
+ * Point3D<ll> A(0,0,0);
+ * Point3D<ll> B(1,0,0);
+ * Vector3D<ll> AB(A,B);
+ *
+ * // ベクトルvとベクトルABの外積を求める
+ * Vector3D<ll> cp = v.cross(AB); // 外積
  *
  */
 template<typename T>
