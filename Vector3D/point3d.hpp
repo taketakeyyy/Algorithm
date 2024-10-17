@@ -1,6 +1,8 @@
 /**
  * @brief 3次元点
- *
+ * @example
+ * // 点A(1,2,0)を作成
+ * Point3D<ll> A(1,2,0);
  */
 template<typename T>
 struct Point3D {
