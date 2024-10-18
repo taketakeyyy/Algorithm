@@ -51,6 +51,7 @@ void test1() {
     if (res) cout << "Yes" << endl;
     else cout << "No" << endl;
     // Yes
+    assert(res == true);
 }
 
 /**
@@ -75,6 +76,7 @@ void test2() {
     if (res) cout << "Yes" << endl;
     else cout << "No" << endl;
     // No
+    assert(res == false);
 }
 
 int main() {

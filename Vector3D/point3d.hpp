@@ -1,3 +1,6 @@
+#ifndef POINT3D_HPP
+#define POINT3D_HPP
+
 /**
  * @brief 3次元点
  * @example
@@ -7,6 +10,9 @@
 template<typename T>
 struct Point3D {
     T x, y, z;
+
+    Point3D() : x(0), y(0), z(0) {} // デフォルトコンストラクタ
+    Point3D(T x, T y, T z): x(x), y(y), z(z) {}
 
     bool operator<(const Point3D<T> &other) const {
         if (this->x < other.x) return true;
@@ -31,3 +37,5 @@ struct Point3D {
         return !(*this < other);
     }
 };
+
+#endif // POINT3D_HPP
