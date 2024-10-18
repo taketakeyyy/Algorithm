@@ -17,6 +17,12 @@
  * @note
  * - 凸包の周りをぐるりと結んだ線分中にある点は、凸包に含まれない
  * - 凸包の点群は2個以下のときもある。その場合線分だったり、1点だったりする。
+ * @example
+ * vector<Point3D<ll>> P(N);
+ * // ...Pには点群が格納されている
+ *
+ * // 凸包を求める
+ * auto hull = convexHull<ll>(P);
  */
 template<typename T>
 std::vector<Point3D<T>> convexHull(std::vector<Point3D<T>> points) {
@@ -36,7 +42,7 @@ std::vector<Point3D<T>> convexHull(std::vector<Point3D<T>> points) {
         return (cp.z > 0) ? 1 : 2; // 反時計回り:1, 時計回り2
     };
 
-    // 点p0から見た点の極角でソートする用の関数
+    // 点p0から見た点の偏角でソートする用の関数
     auto compareAngle = [&p0, &orientation](const Point3D<T> &a, const Point3D<T> &b) -> bool {
         int o = orientation(p0, a, b);
         Vector3D<T> PA(p0,a);
@@ -45,7 +51,7 @@ std::vector<Point3D<T>> convexHull(std::vector<Point3D<T>> points) {
         return (o == 1);
     };
 
-    // p0からの角度でソート
+    // p0からの偏角でソート
     std::sort(points.begin()+1, points.end(), compareAngle);
 
     // 凸包を形成する
