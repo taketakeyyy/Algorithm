@@ -26,7 +26,7 @@ bool is_z_plus (Point3D<ll> A, Point3D<ll> B, Point3D<ll> C) {
     Vector3D<ll> AC(A,C);
     // AB x AC の外積
     auto cp = AB.cross(AC);
-    return cp.z >= 0;
+    return cp.z > 0;
 }
 
 /**
