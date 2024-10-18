@@ -1,3 +1,6 @@
+#ifndef VECTOR3D_HPP
+#define VECTOR3D_HPP
+
 #include "point3d.hpp"
 
 /**
@@ -20,6 +23,7 @@ class Vector3D {
 public:
     T x, y, z;
 
+    Vector3D(): x(0), y(0), z(0) {} // デフォルトコンストラクタ
     Vector3D(T _x, T _y, T _z): x(_x), y(_y), z(_z) {}
     Vector3D(const Point3D<T> &p1, const Point3D<T> &p2): x(p2.x-p1.x), y(p2.y-p1.y), z(p2.z-p1.z) {}
 
@@ -88,3 +92,5 @@ public:
         return !(*this < other);
     }
 };
+
+#endif // VECTOR3D_HPP
