@@ -42,9 +42,7 @@ private:
         Node *prev;
         char moji;
         bool is_endnode;  // ある文字列の終端ノード（受理状態）か？
-        Node() {
-            is_endnode = false;
-        }
+        Node(): is_endnode(false) {}
     };
     Node root;
 
@@ -68,8 +66,9 @@ public:
                 child_ptr->moji = S[i];
                 child_ptr->prev = now_ptr;
                 now_ptr->next[S[i]] = child_ptr;
-                if (i == S.size()-1) child_ptr->is_endnode = true;
                 now_ptr = child_ptr;
+                if (i == S.size()-1) now_ptr->is_endnode = true;
+                continue;
             }
         }
     }
